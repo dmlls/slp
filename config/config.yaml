@@ -1,0 +1,24 @@
+data:
+    src: "gloss" # Source - Either Gloss->Pose or Text->Pose (gloss,text)
+    trg: "skels" # Target - 3D body co-ordinates (skels)
+    files: "files" # Filenames for each sequence
+
+    train: "../.data/train"
+    dev: "../.data/dev"
+    test: "../.data/test"
+
+    max_sent_length: 300 # Max Sentence Length
+    skip_frames: 1 # Skip frames in the data, to reduce the data input size
+    src_vocab: "../config/src_vocab.txt"
+model:
+    initializer: "xavier" # Model initialisation (Xavier, ...)
+    bias_initializer: "zeros" # Bias initialiser (Zeros, ...)
+    embed_initializer: "xavier" # Embedding initialiser (Xavier, ...)
+    trg_size: 150 # Size of target skeleton coordinates (150 for Inverse Kinematics body/hands)
+    just_count_in: False # Flag for Just Counter Data Augmentation
+    gaussian_noise: False # Flag for Gaussian Noise Data Augmentation
+    noise_rate: 5 # Gaussian Noise rate
+    future_prediction: 0 # Future Prediction Data Augmentation if > 0
+cache:
+    active: False
+    cache_dir: "/tmp/skelesign/"
