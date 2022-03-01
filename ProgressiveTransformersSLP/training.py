@@ -566,11 +566,11 @@ def train(cfg_file: str, ckpt=None) -> None:
     trainer.train_and_validate(train_data=train_data, valid_data=dev_data)
 
     # Test the model with the best checkpoint
-    test(cfg_file)
+    test(cfg_file, ckpt)
 
 # pylint: disable-msg=logging-too-many-args
 def test(cfg_file,
-         ckpt: str) -> None:
+         ckpt: str = None) -> None:
 
     # Load the config file
     cfg = load_config(cfg_file)
