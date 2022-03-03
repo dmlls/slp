@@ -3,14 +3,17 @@
 """
 Vocabulary module
 """
+import torch
+import numpy as np
+import constants
+from transformers import AutoTokenizer, AutoModelForMaskedLM
 from collections import defaultdict, Counter
 from typing import List
-import numpy as np
 
 from torchtext.data import Dataset
+from transformers import logging
 
-from constants import UNK_TOKEN, DEFAULT_UNK_ID, \
-    EOS_TOKEN, BOS_TOKEN, PAD_TOKEN
+logging.set_verbosity_warning()
 
 
 class Vocabulary:
@@ -22,9 +25,12 @@ class Vocabulary:
         # warning: stoi grows with unknown tokens, don't use for saving or size
 
         # special symbols
-        self.specials = [UNK_TOKEN, PAD_TOKEN, BOS_TOKEN, EOS_TOKEN]
+        self.specials = [constants.UNK_TOKEN,
+                         constants.PAD_TOKEN,
+                         constants.BOS_TOKEN,
+                         constants.EOS_TOKEN]
 
-        self.stoi = defaultdict(DEFAULT_UNK_ID)
+        self.stoi = defaultdict(constants.DEFAULT_UNK_ID)
         self.itos = []
         if tokens is not None:
             self._from_list(tokens)
@@ -88,7 +94,7 @@ class Vocabulary:
         :param token:
         :return: True if covered, False otherwise
         """
-        return self.stoi[token] == DEFAULT_UNK_ID()
+        return self.stoi[token] == constants.DEFAULT_UNK_ID()
 
     def __len__(self) -> int:
         return len(self.itos)
@@ -105,7 +111,7 @@ class Vocabulary:
         sentence = []
         for i in array:
             s = self.itos[i]
-            if cut_at_eos and s == EOS_TOKEN:
+            if cut_at_eos and s == constants.EOS_TOKEN:
                 break
             sentence.append(s)
         return sentence
@@ -127,12 +133,18 @@ class Vocabulary:
         return sentences
 
 
-def build_vocab(field: str, max_size: int, min_freq: int, dataset: Dataset,
-                vocab_file: str = None) -> Vocabulary:
+def build_vocab(
+    cfg: dict,
+    field: str,
+    max_size: int,
+    min_freq: int,
+    dataset: Dataset
+) -> Vocabulary:
     """
     Builds vocabulary for a torchtext `field` from given`dataset` or
     `vocab_file`.
 
+    :param cfg: configuration
     :param field: attribute e.g. "src"
     :param max_size: maximum size of vocabulary
     :param min_freq: minimum frequency for an item to be included
@@ -142,11 +154,17 @@ def build_vocab(field: str, max_size: int, min_freq: int, dataset: Dataset,
     :return: Vocabulary created from either `dataset` or `vocab_file`
     """
 
-    if vocab_file is not None:
+    vocab_file = cfg["data"].get("src_vocab", None)
+    # Use pretrained embeddings from this model or train embeddings from
+    # scratch if model = "none"
+    model = cfg["model"]["encoder"]["embeddings"]["model"]
+    embeddings = None
+
+    if vocab_file is not None and model == "none":
         # load it from file
         vocab = Vocabulary(file=vocab_file)
-    else:
-        # create newly
+    elif model == "none":
+        # create newly from the input dataset
         def filter_min(counter: Counter, min_freq: int):
             """ Filter counter by min frequency """
             filtered_counter = Counter({t: c for t, c in counter.items()
@@ -178,10 +196,21 @@ def build_vocab(field: str, max_size: int, min_freq: int, dataset: Dataset,
 
         vocab = Vocabulary(tokens=vocab_tokens)
         assert len(vocab) <= max_size + len(vocab.specials)
-        assert vocab.itos[DEFAULT_UNK_ID()] == UNK_TOKEN
+        assert vocab.itos[constants.DEFAULT_UNK_ID()] == constants.UNK_TOKEN
+        # check for all except for UNK token whether they are OOVs
+        for s in vocab.specials[1:]:
+            assert not vocab.is_unk(s)
 
-    # check for all except for UNK token whether they are OOVs
-    for s in vocab.specials[1:]:
-        assert not vocab.is_unk(s)
+    elif model == "bert":
+        tokenizer = AutoTokenizer.from_pretrained("bert-base-german-cased")
+        model = AutoModelForMaskedLM.from_pretrained("bert-base-german-cased")
+        vocab = [token for token in tokenizer.get_vocab().items()]  # tokens and its ids
+        embeddings = torch.stack([model.get_input_embeddings()(torch.tensor(token[1]))
+                                  for token in vocab])
+        vocab = Vocabulary(tokens=[token[0] for token in vocab])
+    else:
+        raise ValueError(f"embeddings from model {model} not supported")
 
-    return vocab
+    if embeddings is not None:
+        assert len(vocab) == len(embeddings)
+    return vocab, embeddings

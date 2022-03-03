@@ -5,15 +5,15 @@ Data module
 import sys
 import os
 import os.path
-from typing import Optional
 import io
+import constants
+from typing import Optional
 
 # from torchtext.datasets import TranslationDataset
 from torchtext import data
 from torchtext.data import Dataset, Iterator, Field
 import torch
 
-from constants import UNK_TOKEN, EOS_TOKEN, BOS_TOKEN, PAD_TOKEN, TARGET_PAD
 from vocabulary import build_vocab, Vocabulary
 
 # Load the Regression Data
@@ -63,14 +63,13 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
     # Skip frames is used to skip a set proportion of target frames, to simplify the model requirements
     skip_frames = data_cfg.get("skip_frames", 1)
 
-    EOS_TOKEN = '</s>'
     tok_fun = lambda s: list(s) if level == "char" else s.split()
 
     # Source field is a tokenised version of the source words
-    src_field = data.Field(init_token=None, eos_token=EOS_TOKEN,
-                           pad_token=PAD_TOKEN, tokenize=tok_fun,
+    src_field = data.Field(init_token=None, eos_token=constants.EOS_TOKEN,
+                           pad_token=constants.PAD_TOKEN, tokenize=tok_fun,
                            batch_first=True, lower=lowercase,
-                           unk_token=UNK_TOKEN,
+                           unk_token=constants.UNK_TOKEN,
                            include_lengths=True)
 
     # Files field is just a raw text field
@@ -91,7 +90,7 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
                                dtype=torch.float32,
                                batch_first=True,
                                include_lengths=False,
-                               pad_token=torch.ones((trg_size,))*TARGET_PAD,
+                               pad_token=torch.ones((trg_size,))*constants.TARGET_PAD,
                                preprocessing=tokenize_features,
                                postprocessing=stack_features,)
 
@@ -109,10 +108,9 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
 
     src_max_size = data_cfg.get("src_voc_limit", sys.maxsize)
     src_min_freq = data_cfg.get("src_voc_min_freq", 1)
-    src_vocab_file = data_cfg.get("src_vocab", None)
-    src_vocab = build_vocab(field="src", min_freq=src_min_freq,
-                            max_size=src_max_size,
-                            dataset=train_data, vocab_file=src_vocab_file)
+    src_vocab, pretrained_embed = build_vocab(
+        cfg, field="src", min_freq=src_min_freq, max_size=src_max_size,
+        dataset=train_data)
 
     # Create a target vocab just as big as the required target vector size -
     # So that len(trg_vocab) is # of joints + 1 (for the counter)
@@ -120,10 +118,10 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
 
     # Create the Validation Data
     dev_data = SignProdDataset(path=dev_path,
-                                  exts=("." + src_lang, "." + trg_lang, "." + files_lang),
-                                  trg_size=trg_size,
-                                  fields=(src_field, reg_trg_field, files_field),
-                                  skip_frames=skip_frames)
+                               exts=("." + src_lang, "." + trg_lang, "." + files_lang),
+                               trg_size=trg_size,
+                               fields=(src_field, reg_trg_field, files_field),
+                               skip_frames=skip_frames)
 
     # Create the Testing Data
     test_data = SignProdDataset(
@@ -135,7 +133,7 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
 
     src_field.vocab = src_vocab
 
-    return train_data, dev_data, test_data, src_vocab, trg_vocab
+    return train_data, dev_data, test_data, src_vocab, pretrained_embed, trg_vocab
 
 
 # pylint: disable=global-at-module-level

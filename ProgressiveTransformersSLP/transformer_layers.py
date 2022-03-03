@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch import Tensor
 import numpy as np
 import torch.nn.functional as F
-from constants import TARGET_PAD
+import constants
 
 
 # pylint: disable=arguments-differ
@@ -29,7 +29,7 @@ class MultiHeadedAttention(nn.Module):
         self.output_layer = nn.Linear(size, size)
         self.softmax = nn.Softmax(dim=-1)
         self.dropout = nn.Dropout(dropout)
-        self.target_pad = TARGET_PAD
+        self.target_pad = constants.TARGET_PAD
 
     def forward(self, k: Tensor, v: Tensor, q: Tensor, mask: Tensor = None, padding_mask: Tensor = None):
 

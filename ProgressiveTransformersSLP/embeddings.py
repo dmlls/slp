@@ -46,8 +46,10 @@ class Embeddings(nn.Module):
 
     # pylint: disable=unused-argument
     def __init__(self,
+                 model: str,
                  embedding_dim: int = 64,
                  scale: bool = False,
+                 pretrained_embed: Tensor = None,
                  vocab_size: int = 0,
                  padding_idx: int = 1,
                  freeze: bool = False,
@@ -64,14 +66,20 @@ class Embeddings(nn.Module):
         """
         super(Embeddings, self).__init__()
 
+        self.model = model
         self.embedding_dim = embedding_dim
         self.scale = scale
         self.vocab_size = vocab_size
-        self.lut = nn.Embedding(vocab_size, self.embedding_dim,
-                                padding_idx=padding_idx)
-
-        if freeze:
-            freeze_params(self)
+        if model == "none" or pretrained_embed is None:
+            # Train from scratch
+            self.lut = nn.Embedding(vocab_size, self.embedding_dim,
+                                    padding_idx=padding_idx)
+            if freeze:
+                freeze_params(self)
+        elif model == "bert":
+            # Use pretrained embeddings
+            self.lut = nn.Embedding.from_pretrained(
+                pretrained_embed, freeze=freeze, padding_idx=padding_idx)
 
     # pylint: disable=arguments-differ
     def forward(self, x: Tensor) -> Tensor:
