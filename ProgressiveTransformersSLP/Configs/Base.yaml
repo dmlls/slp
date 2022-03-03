@@ -3,9 +3,9 @@ data:
     trg: "skels" # Target - 3D body co-ordinates (skels)
     files: "files" # Filenames for each sequence
 
-    train: "./Data/tmp/train"
-    dev: "./Data/tmp/dev"
-    test: "./Data/tmp/test"
+    train: "./slp/ProgressiveTransformersSLP/Data/tmp/train"
+    dev: "./slp/ProgressiveTransformersSLP/Data/tmp/dev"
+    test: "./slp/ProgressiveTransformersSLP/Data/tmp/test"
 
     max_sent_length: 300 # Max Sentence Length
     skip_frames: 1 # Skip frames in the data, to reduce the data input size
@@ -50,9 +50,10 @@ model:
         num_layers: 2 # Number of layers
         num_heads: 4 # Number of Heads
         embeddings:
-            embedding_dim: 512 # Embedding Dimension
+            model: "bert"  # Pretrained embeddings: ("none", "bert")
+            embedding_dim: 768 # Embedding Dimension
             dropout: 0.0 # Embedding Dropout
-        hidden_size: 512 # Hidden Size Dimension
+        hidden_size: 768 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
         dropout: 0.0 # Encoder Dropout
     decoder: # Model Decoder
@@ -60,8 +61,8 @@ model:
         num_layers: 2 # Number of layers
         num_heads: 4 # Number of Heads
         embeddings:
-            embedding_dim: 512 # Embedding Dimension
+            embedding_dim: 768 # Embedding Dimension
             dropout: 0.0 # Embedding Dropout
-        hidden_size: 512 # Hidden Size Dimension
+        hidden_size: 768 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
         dropout: 0.0 # Decoder Dropout

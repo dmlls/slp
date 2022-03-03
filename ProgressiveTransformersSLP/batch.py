@@ -7,7 +7,7 @@ Implementation of a mini-batch.
 import torch
 import torch.nn.functional as F
 
-from constants import TARGET_PAD
+import constants
 
 class Batch:
     """Object for holding a batch of data with mask during training.
@@ -37,7 +37,7 @@ class Batch:
 
         self.file_paths = torch_batch.file_paths
         self.use_cuda = model.use_cuda
-        self.target_pad = TARGET_PAD
+        self.target_pad = constants.TARGET_PAD
         # Just Count
         self.just_count_in = model.just_count_in
         # Future Prediction

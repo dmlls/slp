@@ -6,6 +6,8 @@ import queue
 import numpy as np
 
 import torch
+import constants
+
 from torch import Tensor
 from torch.utils.tensorboard import SummaryWriter
 from torchtext.data import Dataset
@@ -20,7 +22,7 @@ from loss import RegLoss, XentLoss
 from data import load_data, make_data_iter
 from builders import build_optimizer, build_scheduler, \
     build_gradient_clipper
-from constants import TARGET_PAD
+from constants import initialize_constants
 
 from plot_videos import plot_video,alter_DTW_timing
 
@@ -54,7 +56,7 @@ class TrainManager:
         self.pad_index = self.model.pad_index
         self.bos_index = self.model.bos_index
         self._log_parameters_list()
-        self.target_pad = TARGET_PAD
+        self.target_pad = constants.TARGET_PAD
 
         # New Regression loss - depending on config
         self.loss = RegLoss(cfg = config,
@@ -539,14 +541,17 @@ def train(cfg_file: str, ckpt=None) -> None:
     # Load the config file
     cfg = load_config(cfg_file)
 
+    initialize_constants(cfg)
+
     # Set the random seed
     set_seed(seed=cfg["training"].get("random_seed", 42))
 
     # Load the data - Trg as (batch, # of frames, joints + 1 )
-    train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
+    train_data, dev_data, test_data, src_vocab, pretrained_embed, trg_vocab = load_data(cfg=cfg)
 
     # Build the Progressive Transformer model
-    model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
+    model = build_model(cfg, src_vocab=src_vocab, pretrained_embed=pretrained_embed,
+                        trg_vocab=trg_vocab)
 
     if ckpt is not None:
         use_cuda = cfg["training"].get("use_cuda", False)
@@ -591,7 +596,7 @@ def test(cfg_file,
     max_output_length = cfg["training"].get("max_output_length", None)
 
     # load the data
-    train_data, dev_data, test_data, src_vocab, trg_vocab = load_data(cfg=cfg)
+    train_data, dev_data, test_data, src_vocab, pretrained_embed, trg_vocab = load_data(cfg=cfg)
 
     # To produce testing results
     data_to_predict = {"test": test_data}
@@ -602,7 +607,8 @@ def test(cfg_file,
     model_checkpoint = load_checkpoint(ckpt, use_cuda=use_cuda)
 
     # Build model and load parameters into it
-    model = build_model(cfg, src_vocab=src_vocab, trg_vocab=trg_vocab)
+    model = build_model(cfg, src_vocab=src_vocab, pretrained_embed=pretrained_embed,
+                        trg_vocab=trg_vocab)
     model.load_state_dict(model_checkpoint["model_state"])
     # If cuda, set model as cuda
     if use_cuda:
