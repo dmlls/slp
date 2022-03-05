@@ -3,9 +3,9 @@ data:
     trg: "skels" # Target - 3D body co-ordinates (skels)
     files: "files" # Filenames for each sequence
 
-    train: "./slp/ProgressiveTransformersSLP/Data/tmp/train"
-    dev: "./slp/ProgressiveTransformersSLP/Data/tmp/dev"
-    test: "./slp/ProgressiveTransformersSLP/Data/tmp/test"
+    train: "./drive/My Drive/Text2Sign/train"
+    dev: "./drive/My Drive/Text2Sign/dev"
+    test: "./drive/My Drive/Text2Sign/test"
 
     max_sent_length: 300 # Max Sentence Length
     skip_frames: 1 # Skip frames in the data, to reduce the data input size
@@ -23,8 +23,8 @@ training:
     patience: 7 # How many epochs of no improvement causes a LR reduction
     decrease_factor: 0.7 # LR reduction factor, after the # of patience epochs
     early_stopping_metric: "dtw" # Which metric determines scheduling (DTW, loss, BT...)
-    epochs: 20000 # How many epochs to run for
-    validation_freq: 10 # After how many steps to run a validation on the model
+    epochs: 20001 # How many epochs to run for
+    validation_freq: 500 # After how many steps to run a validation on the model
     logging_freq: 250 # After how many steps to log training progress
     eval_metric: "dtw" # Evaluation metric during training (dtw','bt')
     model_dir: "./Models/Base" # Where the model shall be stored
@@ -50,10 +50,9 @@ model:
         num_layers: 2 # Number of layers
         num_heads: 4 # Number of Heads
         embeddings:
-            model: "bert"  # Pretrained embeddings: ("none", "bert")
-            embedding_dim: 768 # Embedding Dimension
+            embedding_dim: 512 # Embedding Dimension
             dropout: 0.0 # Embedding Dropout
-        hidden_size: 768 # Hidden Size Dimension
+        hidden_size: 512 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
         dropout: 0.0 # Encoder Dropout
     decoder: # Model Decoder
@@ -61,8 +60,9 @@ model:
         num_layers: 2 # Number of layers
         num_heads: 4 # Number of Heads
         embeddings:
-            embedding_dim: 768 # Embedding Dimension
+            embedding_dim: 512 # Embedding Dimension
             dropout: 0.0 # Embedding Dropout
-        hidden_size: 768 # Hidden Size Dimension
+        hidden_size: 512 # Hidden Size Dimension
         ff_size: 2048 # Feed-forward dimension (4 x hidden_size)
         dropout: 0.0 # Decoder Dropout
+
