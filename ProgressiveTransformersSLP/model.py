@@ -289,26 +289,41 @@ def build_model(cfg: dict = None,
         # Times the trg_size (minus counter) by amount of predicted frames, and then add back counter
         out_trg_size = (out_trg_size - 1 ) * future_prediction + 1
 
+    enc_embed_dim = cfg["encoder"]["embeddings"]["embedding_dim"]
+    enc_hidden_size = cfg["encoder"]["hidden_size"]
+    dec_embed_dim = cfg["decoder"]["embeddings"]["embedding_dim"]
+    dec_hidden_size = cfg["decoder"]["hidden_size"]
+
+    if cfg["encoder"]["embeddings"]["model"] == "bert":
+        enc_embed_dim, enc_hidden_size, dec_embed_dim, dec_hidden_size = [768]*4
+
     # Define source embedding
     src_embed = Embeddings(
-        **cfg["encoder"]["embeddings"], pretrained_embed=pretrained_embed,
-        vocab_size=len(src_vocab), padding_idx=src_padding_idx)
+        model=cfg["encoder"]["embeddings"]["model"],
+        embedding_dim=enc_embed_dim,
+        pretrained_embed=pretrained_embed,
+        vocab_size=len(src_vocab), padding_idx=src_padding_idx
+    )
 
     # Define target linear
     # Linear layer replaces an embedding layer - as this takes in the joints size as opposed to a token
-    trg_linear = nn.Linear(in_trg_size, cfg["decoder"]["embeddings"]["embedding_dim"])
+    trg_linear = nn.Linear(in_trg_size, dec_embed_dim)
 
     ## Encoder -------
     enc_dropout = cfg["encoder"].get("dropout", 0.) # Dropout
     enc_emb_dropout = cfg["encoder"]["embeddings"].get("dropout", enc_dropout)
-    assert cfg["encoder"]["embeddings"]["embedding_dim"] == \
-           cfg["encoder"]["hidden_size"], \
-           "for transformer, emb_size must be hidden_size"
+    assert (enc_embed_dim == enc_hidden_size,
+            "for transformer, emb_size must be hidden_size")
 
     # Transformer Encoder
-    encoder = TransformerEncoder(**cfg["encoder"],
-                                 emb_size=src_embed.embedding_dim,
-                                 emb_dropout=enc_emb_dropout)
+    encoder = TransformerEncoder(
+        hidden_size=enc_hidden_size,
+        ff_size=cfg["encoder"]["ff_size"],
+        num_layers=cfg["encoder"]["n_layers"],
+        num_heads=cfg["encoder"]["n_heads"],
+        emb_size=src_embed.embedding_dim,
+        emb_dropout=enc_emb_dropout
+    )
 
     ## Decoder -------
     dec_dropout = cfg["decoder"].get("dropout", 0.) # Dropout
@@ -316,9 +331,18 @@ def build_model(cfg: dict = None,
     decoder_trg_trg = cfg["decoder"].get("decoder_trg_trg", True)
     # Transformer Decoder
     decoder = TransformerDecoder(
-        **cfg["decoder"], encoder=encoder, vocab_size=len(trg_vocab),
-        emb_size=trg_linear.out_features, emb_dropout=dec_emb_dropout,
-        trg_size=out_trg_size, decoder_trg_trg_=decoder_trg_trg)
+        num_layers=cfg["decoder"]["num_layers"],
+        num_heads=cfg["decoder"]["num_heads"],
+        ff_size=cfg["decoder"]["ff_size"],
+        dropout=cfg["decoder"]["dropout"],
+        hidden_size=dec_hidden_size,
+        encoder=encoder,
+        vocab_size=len(trg_vocab),
+        emb_size=trg_linear.out_features,
+        emb_dropout=dec_emb_dropout,
+        trg_size=out_trg_size,
+        decoder_trg_trg_=decoder_trg_trg
+    )
 
     # Define the model
     model = Model(encoder=encoder,
