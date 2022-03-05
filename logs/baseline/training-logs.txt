@@ -1,0 +1,289 @@
+2022-03-04 17:25:50,984 Progressive Transformers for End-to-End SLP
+2022-03-04 17:25:55,286 Total params: 16333824
+2022-03-04 17:25:55,287 Trainable parameters: ['decoder.layer_norm.bias', 'decoder.layer_norm.weight', 'decoder.layers.0.dec_layer_norm.bias', 'decoder.layers.0.dec_layer_norm.weight', 'decoder.layers.0.feed_forward.layer_norm.bias', 'decoder.layers.0.feed_forward.layer_norm.weight', 'decoder.layers.0.feed_forward.pwff_layer.0.bias', 'decoder.layers.0.feed_forward.pwff_layer.0.weight', 'decoder.layers.0.feed_forward.pwff_layer.3.bias', 'decoder.layers.0.feed_forward.pwff_layer.3.weight', 'decoder.layers.0.src_trg_att.k_layer.bias', 'decoder.layers.0.src_trg_att.k_layer.weight', 'decoder.layers.0.src_trg_att.output_layer.bias', 'decoder.layers.0.src_trg_att.output_layer.weight', 'decoder.layers.0.src_trg_att.q_layer.bias', 'decoder.layers.0.src_trg_att.q_layer.weight', 'decoder.layers.0.src_trg_att.v_layer.bias', 'decoder.layers.0.src_trg_att.v_layer.weight', 'decoder.layers.0.trg_trg_att.k_layer.bias', 'decoder.layers.0.trg_trg_att.k_layer.weight', 'decoder.layers.0.trg_trg_att.output_layer.bias', 'decoder.layers.0.trg_trg_att.output_layer.weight', 'decoder.layers.0.trg_trg_att.q_layer.bias', 'decoder.layers.0.trg_trg_att.q_layer.weight', 'decoder.layers.0.trg_trg_att.v_layer.bias', 'decoder.layers.0.trg_trg_att.v_layer.weight', 'decoder.layers.0.x_layer_norm.bias', 'decoder.layers.0.x_layer_norm.weight', 'decoder.layers.1.dec_layer_norm.bias', 'decoder.layers.1.dec_layer_norm.weight', 'decoder.layers.1.feed_forward.layer_norm.bias', 'decoder.layers.1.feed_forward.layer_norm.weight', 'decoder.layers.1.feed_forward.pwff_layer.0.bias', 'decoder.layers.1.feed_forward.pwff_layer.0.weight', 'decoder.layers.1.feed_forward.pwff_layer.3.bias', 'decoder.layers.1.feed_forward.pwff_layer.3.weight', 'decoder.layers.1.src_trg_att.k_layer.bias', 'decoder.layers.1.src_trg_att.k_layer.weight', 'decoder.layers.1.src_trg_att.output_layer.bias', 'decoder.layers.1.src_trg_att.output_layer.weight', 'decoder.layers.1.src_trg_att.q_layer.bias', 'decoder.layers.1.src_trg_att.q_layer.weight', 'decoder.layers.1.src_trg_att.v_layer.bias', 'decoder.layers.1.src_trg_att.v_layer.weight', 'decoder.layers.1.trg_trg_att.k_layer.bias', 'decoder.layers.1.trg_trg_att.k_layer.weight', 'decoder.layers.1.trg_trg_att.output_layer.bias', 'decoder.layers.1.trg_trg_att.output_layer.weight', 'decoder.layers.1.trg_trg_att.q_layer.bias', 'decoder.layers.1.trg_trg_att.q_layer.weight', 'decoder.layers.1.trg_trg_att.v_layer.bias', 'decoder.layers.1.trg_trg_att.v_layer.weight', 'decoder.layers.1.x_layer_norm.bias', 'decoder.layers.1.x_layer_norm.weight', 'decoder.output_layer.weight', 'encoder.layer_norm.bias', 'encoder.layer_norm.weight', 'encoder.layers.0.feed_forward.layer_norm.bias', 'encoder.layers.0.feed_forward.layer_norm.weight', 'encoder.layers.0.feed_forward.pwff_layer.0.bias', 'encoder.layers.0.feed_forward.pwff_layer.0.weight', 'encoder.layers.0.feed_forward.pwff_layer.3.bias', 'encoder.layers.0.feed_forward.pwff_layer.3.weight', 'encoder.layers.0.layer_norm.bias', 'encoder.layers.0.layer_norm.weight', 'encoder.layers.0.src_src_att.k_layer.bias', 'encoder.layers.0.src_src_att.k_layer.weight', 'encoder.layers.0.src_src_att.output_layer.bias', 'encoder.layers.0.src_src_att.output_layer.weight', 'encoder.layers.0.src_src_att.q_layer.bias', 'encoder.layers.0.src_src_att.q_layer.weight', 'encoder.layers.0.src_src_att.v_layer.bias', 'encoder.layers.0.src_src_att.v_layer.weight', 'encoder.layers.1.feed_forward.layer_norm.bias', 'encoder.layers.1.feed_forward.layer_norm.weight', 'encoder.layers.1.feed_forward.pwff_layer.0.bias', 'encoder.layers.1.feed_forward.pwff_layer.0.weight', 'encoder.layers.1.feed_forward.pwff_layer.3.bias', 'encoder.layers.1.feed_forward.pwff_layer.3.weight', 'encoder.layers.1.layer_norm.bias', 'encoder.layers.1.layer_norm.weight', 'encoder.layers.1.src_src_att.k_layer.bias', 'encoder.layers.1.src_src_att.k_layer.weight', 'encoder.layers.1.src_src_att.output_layer.bias', 'encoder.layers.1.src_src_att.output_layer.weight', 'encoder.layers.1.src_src_att.q_layer.bias', 'encoder.layers.1.src_src_att.q_layer.weight', 'encoder.layers.1.src_src_att.v_layer.bias', 'encoder.layers.1.src_src_att.v_layer.weight', 'src_embed.lut.weight', 'trg_embed.bias', 'trg_embed.weight']
+2022-03-04 17:25:57,602 cfg.data.src                       : text
+2022-03-04 17:25:57,602 cfg.data.trg                       : skels
+2022-03-04 17:25:57,602 cfg.data.files                     : files
+2022-03-04 17:25:57,603 cfg.data.train                     : ./drive/My Drive/Text2Sign/train
+2022-03-04 17:25:57,603 cfg.data.dev                       : ./drive/My Drive/Text2Sign/dev
+2022-03-04 17:25:57,603 cfg.data.test                      : ./drive/My Drive/Text2Sign/test
+2022-03-04 17:25:57,603 cfg.data.max_sent_length           : 300
+2022-03-04 17:25:57,603 cfg.data.skip_frames               : 1
+2022-03-04 17:25:57,603 cfg.training.random_seed           : 27
+2022-03-04 17:25:57,603 cfg.training.optimizer             : adam
+2022-03-04 17:25:57,603 cfg.training.learning_rate         : 0.001
+2022-03-04 17:25:57,604 cfg.training.learning_rate_min     : 0.0002
+2022-03-04 17:25:57,604 cfg.training.weight_decay          : 0.0
+2022-03-04 17:25:57,604 cfg.training.clip_grad_norm        : 5.0
+2022-03-04 17:25:57,604 cfg.training.batch_size            : 8
+2022-03-04 17:25:57,604 cfg.training.scheduling            : plateau
+2022-03-04 17:25:57,604 cfg.training.patience              : 7
+2022-03-04 17:25:57,604 cfg.training.decrease_factor       : 0.7
+2022-03-04 17:25:57,604 cfg.training.early_stopping_metric : dtw
+2022-03-04 17:25:57,604 cfg.training.epochs                : 20001
+2022-03-04 17:25:57,605 cfg.training.validation_freq       : 500
+2022-03-04 17:25:57,605 cfg.training.logging_freq          : 250
+2022-03-04 17:25:57,605 cfg.training.eval_metric           : dtw
+2022-03-04 17:25:57,605 cfg.training.model_dir             : ./Models/Base
+2022-03-04 17:25:57,605 cfg.training.overwrite             : False
+2022-03-04 17:25:57,605 cfg.training.continue              : True
+2022-03-04 17:25:57,605 cfg.training.shuffle               : True
+2022-03-04 17:25:57,605 cfg.training.use_cuda              : True
+2022-03-04 17:25:57,606 cfg.training.max_output_length     : 300
+2022-03-04 17:25:57,606 cfg.training.keep_last_ckpts       : 1
+2022-03-04 17:25:57,606 cfg.training.loss                  : MSE
+2022-03-04 17:25:57,606 cfg.model.initializer              : xavier
+2022-03-04 17:25:57,606 cfg.model.bias_initializer         : zeros
+2022-03-04 17:25:57,606 cfg.model.embed_initializer        : xavier
+2022-03-04 17:25:57,607 cfg.model.trg_size                 : 150
+2022-03-04 17:25:57,607 cfg.model.just_count_in            : False
+2022-03-04 17:25:57,607 cfg.model.gaussian_noise           : False
+2022-03-04 17:25:57,607 cfg.model.noise_rate               : 5
+2022-03-04 17:25:57,607 cfg.model.future_prediction        : 0
+2022-03-04 17:25:57,607 cfg.model.encoder.type             : transformer
+2022-03-04 17:25:57,607 cfg.model.encoder.num_layers       : 2
+2022-03-04 17:25:57,607 cfg.model.encoder.num_heads        : 4
+2022-03-04 17:25:57,608 cfg.model.encoder.embeddings.embedding_dim : 512
+2022-03-04 17:25:57,608 cfg.model.encoder.embeddings.dropout : 0.0
+2022-03-04 17:25:57,608 cfg.model.encoder.hidden_size      : 512
+2022-03-04 17:25:57,608 cfg.model.encoder.ff_size          : 2048
+2022-03-04 17:25:57,608 cfg.model.encoder.dropout          : 0.0
+2022-03-04 17:25:57,608 cfg.model.decoder.type             : transformer
+2022-03-04 17:25:57,608 cfg.model.decoder.num_layers       : 2
+2022-03-04 17:25:57,608 cfg.model.decoder.num_heads        : 4
+2022-03-04 17:25:57,609 cfg.model.decoder.embeddings.embedding_dim : 512
+2022-03-04 17:25:57,609 cfg.model.decoder.embeddings.dropout : 0.0
+2022-03-04 17:25:57,609 cfg.model.decoder.hidden_size      : 512
+2022-03-04 17:25:57,609 cfg.model.decoder.ff_size          : 2048
+2022-03-04 17:25:57,609 cfg.model.decoder.dropout          : 0.0
+2022-03-04 17:25:57,609 EPOCH 1
+/usr/local/lib/python3.7/dist-packages/torchtext/data/field.py:359: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  var = torch.tensor(arr, dtype=self.dtype, device=device)
+2022-03-04 17:26:16,731 Epoch   1 Step:      250 Batch Loss:     0.001326 Tokens per Sec:  2339899, Lr: 0.001000
+2022-03-04 17:26:36,059 Epoch   1 Step:      500 Batch Loss:     0.000972 Tokens per Sec:  2362068, Lr: 0.001000
+2022-03-04 17:26:45,396 Hooray! New best validation result [dtw]!
+2022-03-04 17:26:45,396 Saving new checkpoint.
+/content/slp/ProgressiveTransformersSLP/plot_videos.py:36: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  if PAD_TOKEN in frame_joints:
+2022-03-04 17:27:02,954 Validation result at epoch   1, step      500: Val DTW Score:  13.84, loss:   0.0243,  duration: 26.8945s
+2022-03-04 17:27:22,496 Epoch   1 Step:      750 Batch Loss:     0.000630 Tokens per Sec:  2340448, Lr: 0.001000
+2022-03-04 17:27:33,109 Epoch   1: total training loss 1.61291
+2022-03-04 17:27:33,109 EPOCH 2
+2022-03-04 17:27:42,131 Epoch   2 Step:     1000 Batch Loss:     0.000241 Tokens per Sec:  2367969, Lr: 0.001000
+2022-03-04 17:27:55,338 Validation result at epoch   2, step     1000: Val DTW Score:  14.59, loss:   0.0077,  duration: 13.2062s
+2022-03-04 17:28:14,521 Epoch   2 Step:     1250 Batch Loss:     0.000160 Tokens per Sec:  2305887, Lr: 0.001000
+2022-03-04 17:28:33,994 Epoch   2 Step:     1500 Batch Loss:     0.000127 Tokens per Sec:  2365942, Lr: 0.001000
+2022-03-04 17:28:47,792 Validation result at epoch   2, step     1500: Val DTW Score:  19.16, loss:   0.0051,  duration: 13.7977s
+2022-03-04 17:29:07,148 Epoch   2 Step:     1750 Batch Loss:     0.006497 Tokens per Sec:  2325765, Lr: 0.001000
+2022-03-04 17:29:08,802 Epoch   2: total training loss 0.23293
+2022-03-04 17:29:08,802 EPOCH 3
+2022-03-04 17:29:26,746 Epoch   3 Step:     2000 Batch Loss:     0.000091 Tokens per Sec:  2377099, Lr: 0.001000
+2022-03-04 17:29:39,732 Validation result at epoch   3, step     2000: Val DTW Score:  17.93, loss:   0.0040,  duration: 12.9857s
+2022-03-04 17:29:59,175 Epoch   3 Step:     2250 Batch Loss:     0.000114 Tokens per Sec:  2361425, Lr: 0.001000
+2022-03-04 17:30:18,069 Epoch   3 Step:     2500 Batch Loss:     0.000122 Tokens per Sec:  2345300, Lr: 0.001000
+2022-03-04 17:30:31,166 Validation result at epoch   3, step     2500: Val DTW Score:  17.83, loss:   0.0036,  duration: 13.0969s
+2022-03-04 17:30:43,308 Epoch   3: total training loss 0.15570
+2022-03-04 17:30:43,308 EPOCH 4
+2022-03-04 17:30:50,653 Epoch   4 Step:     2750 Batch Loss:     0.000122 Tokens per Sec:  2365500, Lr: 0.001000
+2022-03-04 17:31:09,834 Epoch   4 Step:     3000 Batch Loss:     0.000089 Tokens per Sec:  2360548, Lr: 0.001000
+2022-03-04 17:31:22,956 Validation result at epoch   4, step     3000: Val DTW Score:  18.50, loss:   0.0036,  duration: 13.1209s
+2022-03-04 17:31:42,500 Epoch   4 Step:     3250 Batch Loss:     0.000114 Tokens per Sec:  2339380, Lr: 0.001000
+2022-03-04 17:32:01,813 Epoch   4 Step:     3500 Batch Loss:     0.000228 Tokens per Sec:  2356636, Lr: 0.001000
+2022-03-04 17:32:15,203 Validation result at epoch   4, step     3500: Val DTW Score:  15.82, loss:   0.0053,  duration: 13.3895s
+2022-03-04 17:32:18,371 Epoch   4: total training loss 0.12866
+2022-03-04 17:32:18,371 EPOCH 5
+2022-03-04 17:32:34,396 Epoch   5 Step:     3750 Batch Loss:     0.000078 Tokens per Sec:  2340665, Lr: 0.001000
+2022-03-04 17:32:53,714 Epoch   5 Step:     4000 Batch Loss:     0.000110 Tokens per Sec:  2358415, Lr: 0.001000
+2022-03-04 17:33:06,948 Validation result at epoch   5, step     4000: Val DTW Score:  18.42, loss:   0.0031,  duration: 13.2344s
+2022-03-04 17:33:26,448 Epoch   5 Step:     4250 Batch Loss:     0.000081 Tokens per Sec:  2345337, Lr: 0.001000
+2022-03-04 17:33:40,078 Epoch   5: total training loss 0.12399
+2022-03-04 17:33:40,079 EPOCH 6
+2022-03-04 17:33:45,916 Epoch   6 Step:     4500 Batch Loss:     0.000088 Tokens per Sec:  2371782, Lr: 0.001000
+2022-03-04 17:33:59,161 Validation result at epoch   6, step     4500: Val DTW Score:  15.66, loss:   0.0029,  duration: 13.2442s
+2022-03-04 17:34:18,620 Epoch   6 Step:     4750 Batch Loss:     0.000072 Tokens per Sec:  2332565, Lr: 0.000700
+2022-03-04 17:34:37,930 Epoch   6 Step:     5000 Batch Loss:     0.000087 Tokens per Sec:  2356995, Lr: 0.000700
+2022-03-04 17:34:51,283 Validation result at epoch   6, step     5000: Val DTW Score:  18.61, loss:   0.0024,  duration: 13.3527s
+2022-03-04 17:35:10,670 Epoch   6 Step:     5250 Batch Loss:     0.000078 Tokens per Sec:  2328275, Lr: 0.000700
+2022-03-04 17:35:15,323 Epoch   6: total training loss 0.08258
+2022-03-04 17:35:15,323 EPOCH 7
+2022-03-04 17:35:29,988 Epoch   7 Step:     5500 Batch Loss:     0.000065 Tokens per Sec:  2345889, Lr: 0.000700
+2022-03-04 17:35:43,238 Validation result at epoch   7, step     5500: Val DTW Score:  15.12, loss:   0.0023,  duration: 13.2492s
+2022-03-04 17:36:02,864 Epoch   7 Step:     5750 Batch Loss:     0.000082 Tokens per Sec:  2346542, Lr: 0.000700
+2022-03-04 17:36:22,103 Epoch   7 Step:     6000 Batch Loss:     0.000072 Tokens per Sec:  2353015, Lr: 0.000700
+2022-03-04 17:36:35,499 Validation result at epoch   7, step     6000: Val DTW Score:  16.40, loss:   0.0024,  duration: 13.3958s
+2022-03-04 17:36:50,672 Epoch   7: total training loss 0.07699
+2022-03-04 17:36:50,672 EPOCH 8
+2022-03-04 17:36:54,973 Epoch   8 Step:     6250 Batch Loss:     0.000067 Tokens per Sec:  2346738, Lr: 0.000700
+2022-03-04 17:37:14,172 Epoch   8 Step:     6500 Batch Loss:     0.000057 Tokens per Sec:  2347841, Lr: 0.000700
+2022-03-04 17:37:27,712 Validation result at epoch   8, step     6500: Val DTW Score:  15.29, loss:   0.0020,  duration: 13.5396s
+2022-03-04 17:37:47,338 Epoch   8 Step:     6750 Batch Loss:     0.000075 Tokens per Sec:  2324053, Lr: 0.000700
+2022-03-04 17:38:06,814 Epoch   8 Step:     7000 Batch Loss:     0.000055 Tokens per Sec:  2358629, Lr: 0.000700
+2022-03-04 17:38:20,106 Validation result at epoch   8, step     7000: Val DTW Score:  15.71, loss:   0.0019,  duration: 13.2915s
+2022-03-04 17:38:26,445 Epoch   8: total training loss 0.07805
+2022-03-04 17:38:26,445 EPOCH 9
+2022-03-04 17:38:39,658 Epoch   9 Step:     7250 Batch Loss:     0.000063 Tokens per Sec:  2366607, Lr: 0.000700
+2022-03-04 17:38:58,885 Epoch   9 Step:     7500 Batch Loss:     0.000054 Tokens per Sec:  2355734, Lr: 0.000700
+2022-03-04 17:39:12,147 Validation result at epoch   9, step     7500: Val DTW Score:  16.06, loss:   0.0019,  duration: 13.2617s
+2022-03-04 17:39:31,665 Epoch   9 Step:     7750 Batch Loss:     0.000069 Tokens per Sec:  2330008, Lr: 0.000700
+2022-03-04 17:39:48,301 Epoch   9: total training loss 0.07903
+2022-03-04 17:39:48,301 EPOCH 10
+2022-03-04 17:39:51,145 Epoch  10 Step:     8000 Batch Loss:     0.000071 Tokens per Sec:  2397502, Lr: 0.000700
+2022-03-04 17:40:04,398 Validation result at epoch  10, step     8000: Val DTW Score:  14.06, loss:   0.0021,  duration: 13.2518s
+2022-03-04 17:40:23,618 Epoch  10 Step:     8250 Batch Loss:     0.000047 Tokens per Sec:  2330271, Lr: 0.000700
+2022-03-04 17:40:42,823 Epoch  10 Step:     8500 Batch Loss:     0.000059 Tokens per Sec:  2347226, Lr: 0.000700
+2022-03-04 17:40:56,655 Validation result at epoch  10, step     8500: Val DTW Score:  17.87, loss:   0.0017,  duration: 13.8322s
+2022-03-04 17:41:16,164 Epoch  10 Step:     8750 Batch Loss:     0.000059 Tokens per Sec:  2361136, Lr: 0.000490
+2022-03-04 17:41:23,803 Epoch  10: total training loss 0.05627
+2022-03-04 17:41:23,803 EPOCH 11
+2022-03-04 17:41:35,240 Epoch  11 Step:     9000 Batch Loss:     0.000039 Tokens per Sec:  2364001, Lr: 0.000490
+2022-03-04 17:41:48,415 Validation result at epoch  11, step     9000: Val DTW Score:  15.14, loss:   0.0015,  duration: 13.1740s
+2022-03-04 17:42:07,879 Epoch  11 Step:     9250 Batch Loss:     0.000059 Tokens per Sec:  2359074, Lr: 0.000490
+2022-03-04 17:42:27,079 Epoch  11 Step:     9500 Batch Loss:     0.000039 Tokens per Sec:  2379998, Lr: 0.000490
+2022-03-04 17:42:40,273 Validation result at epoch  11, step     9500: Val DTW Score:  18.70, loss:   0.0014,  duration: 13.1937s
+2022-03-04 17:42:58,482 Epoch  11: total training loss 0.04816
+2022-03-04 17:42:58,482 EPOCH 12
+2022-03-04 17:42:59,741 Epoch  12 Step:     9750 Batch Loss:     0.000044 Tokens per Sec:  2461170, Lr: 0.000490
+2022-03-04 17:43:18,740 Epoch  12 Step:    10000 Batch Loss:     0.000030 Tokens per Sec:  2352165, Lr: 0.000490
+2022-03-04 17:43:31,842 Validation result at epoch  12, step    10000: Val DTW Score:  14.63, loss:   0.0014,  duration: 13.1008s
+2022-03-04 17:43:51,201 Epoch  12 Step:    10250 Batch Loss:     0.000048 Tokens per Sec:  2343586, Lr: 0.000490
+2022-03-04 17:44:10,585 Epoch  12 Step:    10500 Batch Loss:     0.000038 Tokens per Sec:  2381909, Lr: 0.000490
+2022-03-04 17:44:23,752 Validation result at epoch  12, step    10500: Val DTW Score:  17.32, loss:   0.0014,  duration: 13.1667s
+2022-03-04 17:44:33,086 Epoch  12: total training loss 0.04247
+2022-03-04 17:44:33,086 EPOCH 13
+2022-03-04 17:44:43,127 Epoch  13 Step:    10750 Batch Loss:     0.000038 Tokens per Sec:  2375925, Lr: 0.000490
+2022-03-04 17:45:02,339 Epoch  13 Step:    11000 Batch Loss:     0.000045 Tokens per Sec:  2369540, Lr: 0.000490
+2022-03-04 17:45:15,467 Validation result at epoch  13, step    11000: Val DTW Score:  20.34, loss:   0.0014,  duration: 13.1279s
+2022-03-04 17:45:34,788 Epoch  13 Step:    11250 Batch Loss:     0.000047 Tokens per Sec:  2355296, Lr: 0.000490
+2022-03-04 17:45:53,870 Epoch  13 Step:    11500 Batch Loss:     0.000043 Tokens per Sec:  2371305, Lr: 0.000490
+2022-03-04 17:46:07,062 Validation result at epoch  13, step    11500: Val DTW Score:  24.21, loss:   0.0014,  duration: 13.1914s
+2022-03-04 17:46:07,646 Epoch  13: total training loss 0.04322
+2022-03-04 17:46:07,646 EPOCH 14
+2022-03-04 17:46:26,478 Epoch  14 Step:    11750 Batch Loss:     0.000041 Tokens per Sec:  2363029, Lr: 0.000490
+2022-03-04 17:46:45,578 Epoch  14 Step:    12000 Batch Loss:     0.000043 Tokens per Sec:  2363484, Lr: 0.000490
+2022-03-04 17:46:58,745 Validation result at epoch  14, step    12000: Val DTW Score:  19.12, loss:   0.0012,  duration: 13.1667s
+2022-03-04 17:47:18,321 Epoch  14 Step:    12250 Batch Loss:     0.000031 Tokens per Sec:  2357469, Lr: 0.000490
+2022-03-04 17:47:29,071 Epoch  14: total training loss 0.04122
+2022-03-04 17:47:29,071 EPOCH 15
+2022-03-04 17:47:37,525 Epoch  15 Step:    12500 Batch Loss:     0.000045 Tokens per Sec:  2379465, Lr: 0.000490
+2022-03-04 17:47:50,674 Validation result at epoch  15, step    12500: Val DTW Score:  15.01, loss:   0.0012,  duration: 13.1485s
+2022-03-04 17:48:10,007 Epoch  15 Step:    12750 Batch Loss:     0.000022 Tokens per Sec:  2351550, Lr: 0.000343
+2022-03-04 17:48:29,351 Epoch  15 Step:    13000 Batch Loss:     0.000026 Tokens per Sec:  2387062, Lr: 0.000343
+2022-03-04 17:48:42,738 Validation result at epoch  15, step    13000: Val DTW Score:  16.12, loss:   0.0011,  duration: 13.3868s
+2022-03-04 17:49:01,741 Epoch  15 Step:    13250 Batch Loss:     0.000041 Tokens per Sec:  2336141, Lr: 0.000343
+2022-03-04 17:49:03,781 Epoch  15: total training loss 0.03356
+2022-03-04 17:49:03,781 EPOCH 16
+2022-03-04 17:49:21,162 Epoch  16 Step:    13500 Batch Loss:     0.000033 Tokens per Sec:  2379834, Lr: 0.000343
+2022-03-04 17:49:34,816 Validation result at epoch  16, step    13500: Val DTW Score:  16.49, loss:   0.0011,  duration: 13.6540s
+2022-03-04 17:49:54,283 Epoch  16 Step:    13750 Batch Loss:     0.000031 Tokens per Sec:  2349405, Lr: 0.000343
+2022-03-04 17:50:13,166 Epoch  16 Step:    14000 Batch Loss:     0.000032 Tokens per Sec:  2345069, Lr: 0.000343
+2022-03-04 17:50:26,300 Validation result at epoch  16, step    14000: Val DTW Score:  20.08, loss:   0.0011,  duration: 13.1336s
+2022-03-04 17:50:39,353 Epoch  16: total training loss 0.03417
+2022-03-04 17:50:39,353 EPOCH 17
+2022-03-04 17:50:46,406 Epoch  17 Step:    14250 Batch Loss:     0.000029 Tokens per Sec:  2398744, Lr: 0.000343
+2022-03-04 17:51:05,681 Epoch  17 Step:    14500 Batch Loss:     0.000043 Tokens per Sec:  2376725, Lr: 0.000343
+2022-03-04 17:51:18,850 Validation result at epoch  17, step    14500: Val DTW Score:  14.44, loss:   0.0011,  duration: 13.1680s
+2022-03-04 17:51:38,216 Epoch  17 Step:    14750 Batch Loss:     0.000027 Tokens per Sec:  2346230, Lr: 0.000343
+2022-03-04 17:51:57,303 Epoch  17 Step:    15000 Batch Loss:     0.000042 Tokens per Sec:  2366888, Lr: 0.000343
+2022-03-04 17:52:10,424 Validation result at epoch  17, step    15000: Val DTW Score:  15.23, loss:   0.0011,  duration: 13.1207s
+2022-03-04 17:52:14,517 Epoch  17: total training loss 0.03473
+2022-03-04 17:52:14,517 EPOCH 18
+2022-03-04 17:52:30,319 Epoch  18 Step:    15250 Batch Loss:     0.000035 Tokens per Sec:  2357353, Lr: 0.000343
+2022-03-04 17:52:49,668 Epoch  18 Step:    15500 Batch Loss:     0.000039 Tokens per Sec:  2377351, Lr: 0.000343
+2022-03-04 17:53:03,169 Validation result at epoch  18, step    15500: Val DTW Score:  15.35, loss:   0.0011,  duration: 13.5011s
+2022-03-04 17:53:22,424 Epoch  18 Step:    15750 Batch Loss:     0.000026 Tokens per Sec:  2340093, Lr: 0.000343
+2022-03-04 17:53:36,225 Epoch  18: total training loss 0.03189
+2022-03-04 17:53:36,226 EPOCH 19
+2022-03-04 17:53:41,691 Epoch  19 Step:    16000 Batch Loss:     0.000032 Tokens per Sec:  2347765, Lr: 0.000343
+2022-03-04 17:53:54,865 Validation result at epoch  19, step    16000: Val DTW Score:  14.47, loss:   0.0010,  duration: 13.1741s
+2022-03-04 17:54:14,043 Epoch  19 Step:    16250 Batch Loss:     0.000035 Tokens per Sec:  2346970, Lr: 0.000343
+2022-03-04 17:54:33,413 Epoch  19 Step:    16500 Batch Loss:     0.000033 Tokens per Sec:  2380337, Lr: 0.000343
+2022-03-04 17:54:46,674 Validation result at epoch  19, step    16500: Val DTW Score:  14.42, loss:   0.0010,  duration: 13.2606s
+2022-03-04 17:55:06,152 Epoch  19 Step:    16750 Batch Loss:     0.000026 Tokens per Sec:  2360214, Lr: 0.000240
+2022-03-04 17:55:11,058 Epoch  19: total training loss 0.03071
+2022-03-04 17:55:11,059 EPOCH 20
+2022-03-04 17:55:25,399 Epoch  20 Step:    17000 Batch Loss:     0.000025 Tokens per Sec:  2378458, Lr: 0.000240
+2022-03-04 17:55:38,669 Validation result at epoch  20, step    17000: Val DTW Score:  14.13, loss:   0.0010,  duration: 13.2698s
+2022-03-04 17:55:57,726 Epoch  20 Step:    17250 Batch Loss:     0.000028 Tokens per Sec:  2327557, Lr: 0.000240
+2022-03-04 17:56:17,002 Epoch  20 Step:    17500 Batch Loss:     0.000035 Tokens per Sec:  2373015, Lr: 0.000240
+2022-03-04 17:56:30,220 Validation result at epoch  20, step    17500: Val DTW Score:  17.52, loss:   0.0010,  duration: 13.2172s
+2022-03-04 17:56:45,877 Epoch  20: total training loss 0.02931
+2022-03-04 17:56:45,877 EPOCH 21
+2022-03-04 17:56:49,610 Epoch  21 Step:    17750 Batch Loss:     0.000028 Tokens per Sec:  2322938, Lr: 0.000240
+2022-03-04 17:57:09,039 Epoch  21 Step:    18000 Batch Loss:     0.000028 Tokens per Sec:  2385720, Lr: 0.000240
+2022-03-04 17:57:18,705 Hooray! New best validation result [dtw]!
+2022-03-04 17:57:18,705 Saving new checkpoint.
+2022-03-04 17:57:36,491 Validation result at epoch  21, step    18000: Val DTW Score:  13.75, loss:   0.0010,  duration: 27.4518s
+2022-03-04 17:57:55,734 Epoch  21 Step:    18250 Batch Loss:     0.000024 Tokens per Sec:  2315682, Lr: 0.000240
+2022-03-04 17:58:15,165 Epoch  21 Step:    18500 Batch Loss:     0.000030 Tokens per Sec:  2386479, Lr: 0.000240
+2022-03-04 17:58:28,461 Validation result at epoch  21, step    18500: Val DTW Score:  16.09, loss:   0.0010,  duration: 13.2956s
+2022-03-04 17:58:35,017 Epoch  21: total training loss 0.02857
+2022-03-04 17:58:35,017 EPOCH 22
+2022-03-04 17:58:47,841 Epoch  22 Step:    18750 Batch Loss:     0.000028 Tokens per Sec:  2382042, Lr: 0.000240
+2022-03-04 17:59:06,964 Epoch  22 Step:    19000 Batch Loss:     0.000035 Tokens per Sec:  2347816, Lr: 0.000240
+2022-03-04 17:59:20,220 Validation result at epoch  22, step    19000: Val DTW Score:  14.50, loss:   0.0009,  duration: 13.2560s
+2022-03-04 17:59:39,603 Epoch  22 Step:    19250 Batch Loss:     0.000029 Tokens per Sec:  2365143, Lr: 0.000240
+2022-03-04 17:59:56,472 Epoch  22: total training loss 0.02787
+2022-03-04 17:59:56,472 EPOCH 23
+2022-03-04 17:59:58,794 Epoch  23 Step:    19500 Batch Loss:     0.000031 Tokens per Sec:  2356736, Lr: 0.000240
+2022-03-04 18:00:11,902 Validation result at epoch  23, step    19500: Val DTW Score:  18.67, loss:   0.0010,  duration: 13.1078s
+2022-03-04 18:00:31,543 Epoch  23 Step:    19750 Batch Loss:     0.000028 Tokens per Sec:  2368477, Lr: 0.000240
+2022-03-04 18:00:50,663 Epoch  23 Step:    20000 Batch Loss:     0.000036 Tokens per Sec:  2357728, Lr: 0.000240
+2022-03-04 18:01:04,298 Validation result at epoch  23, step    20000: Val DTW Score:  16.02, loss:   0.0009,  duration: 13.6349s
+2022-03-04 18:01:23,794 Epoch  23 Step:    20250 Batch Loss:     0.000037 Tokens per Sec:  2321910, Lr: 0.000240
+2022-03-04 18:01:31,746 Epoch  23: total training loss 0.02747
+2022-03-04 18:01:31,746 EPOCH 24
+2022-03-04 18:01:43,017 Epoch  24 Step:    20500 Batch Loss:     0.000029 Tokens per Sec:  2376682, Lr: 0.000240
+2022-03-04 18:01:56,230 Validation result at epoch  24, step    20500: Val DTW Score:  14.29, loss:   0.0009,  duration: 13.2122s
+2022-03-04 18:02:15,443 Epoch  24 Step:    20750 Batch Loss:     0.000023 Tokens per Sec:  2336858, Lr: 0.000240
+2022-03-04 18:02:34,747 Epoch  24 Step:    21000 Batch Loss:     0.000031 Tokens per Sec:  2363705, Lr: 0.000240
+2022-03-04 18:02:48,054 Validation result at epoch  24, step    21000: Val DTW Score:  15.24, loss:   0.0009,  duration: 13.3063s
+2022-03-04 18:03:06,514 Epoch  24: total training loss 0.02792
+2022-03-04 18:03:06,514 EPOCH 25
+2022-03-04 18:03:07,262 Epoch  25 Step:    21250 Batch Loss:     0.000032 Tokens per Sec:  2321608, Lr: 0.000240
+2022-03-04 18:03:26,378 Epoch  25 Step:    21500 Batch Loss:     0.000031 Tokens per Sec:  2365353, Lr: 0.000240
+2022-03-04 18:03:36,019 Hooray! New best validation result [dtw]!
+2022-03-04 18:03:36,019 Saving new checkpoint.
+2022-03-04 18:03:53,751 Validation result at epoch  25, step    21500: Val DTW Score:  13.15, loss:   0.0009,  duration: 27.3730s
+2022-03-04 18:04:13,273 Epoch  25 Step:    21750 Batch Loss:     0.000016 Tokens per Sec:  2373471, Lr: 0.000240
+2022-03-04 18:04:32,505 Epoch  25 Step:    22000 Batch Loss:     0.000025 Tokens per Sec:  2366223, Lr: 0.000240
+2022-03-04 18:04:45,805 Validation result at epoch  25, step    22000: Val DTW Score:  15.01, loss:   0.0009,  duration: 13.2996s
+2022-03-04 18:04:55,417 Epoch  25: total training loss 0.02548
+2022-03-04 18:04:55,417 EPOCH 26
+2022-03-04 18:05:05,015 Epoch  26 Step:    22250 Batch Loss:     0.000024 Tokens per Sec:  2356121, Lr: 0.000240
+2022-03-04 18:05:24,209 Epoch  26 Step:    22500 Batch Loss:     0.000031 Tokens per Sec:  2369797, Lr: 0.000240
+2022-03-04 18:05:37,427 Validation result at epoch  26, step    22500: Val DTW Score:  16.01, loss:   0.0009,  duration: 13.2183s
+2022-03-04 18:05:57,036 Epoch  26 Step:    22750 Batch Loss:     0.000033 Tokens per Sec:  2358112, Lr: 0.000240
+2022-03-04 18:06:16,155 Epoch  26 Step:    23000 Batch Loss:     0.000034 Tokens per Sec:  2356991, Lr: 0.000240
+2022-03-04 18:06:29,454 Validation result at epoch  26, step    23000: Val DTW Score:  18.41, loss:   0.0009,  duration: 13.2985s
+2022-03-04 18:06:30,372 Epoch  26: total training loss 0.02818
+2022-03-04 18:06:30,372 EPOCH 27
+2022-03-04 18:06:48,748 Epoch  27 Step:    23250 Batch Loss:     0.000026 Tokens per Sec:  2352006, Lr: 0.000240
+2022-03-04 18:07:07,962 Epoch  27 Step:    23500 Batch Loss:     0.000027 Tokens per Sec:  2371551, Lr: 0.000240
+2022-03-04 18:07:21,225 Validation result at epoch  27, step    23500: Val DTW Score:  17.59, loss:   0.0009,  duration: 13.2621s
+2022-03-04 18:07:40,837 Epoch  27 Step:    23750 Batch Loss:     0.000030 Tokens per Sec:  2362494, Lr: 0.000240
+2022-03-04 18:07:51,921 Epoch  27: total training loss 0.02641
+2022-03-04 18:07:51,921 EPOCH 28
+2022-03-04 18:08:00,080 Epoch  28 Step:    24000 Batch Loss:     0.000023 Tokens per Sec:  2387458, Lr: 0.000240
+2022-03-04 18:08:13,328 Validation result at epoch  28, step    24000: Val DTW Score:  17.05, loss:   0.0009,  duration: 13.2483s
+2022-03-04 18:08:32,879 Epoch  28 Step:    24250 Batch Loss:     0.000032 Tokens per Sec:  2360137, Lr: 0.000240
+2022-03-04 18:08:52,178 Epoch  28 Step:    24500 Batch Loss:     0.000031 Tokens per Sec:  2374432, Lr: 0.000240
+2022-03-04 18:09:05,493 Validation result at epoch  28, step    24500: Val DTW Score:  18.34, loss:   0.0009,  duration: 13.3147s
+2022-03-04 18:09:24,677 Epoch  28 Step:    24750 Batch Loss:     0.000040 Tokens per Sec:  2327172, Lr: 0.000240
+2022-03-04 18:09:26,898 Epoch  28: total training loss 0.02567
+2022-03-04 18:09:26,899 EPOCH 29
+2022-03-04 18:09:43,796 Epoch  29 Step:    25000 Batch Loss:     0.000027 Tokens per Sec:  2373738, Lr: 0.000240
+2022-03-04 18:09:57,268 Validation result at epoch  29, step    25000: Val DTW Score:  14.07, loss:   0.0009,  duration: 13.4711s
+2022-03-04 18:10:16,452 Epoch  29 Step:    25250 Batch Loss:     0.000028 Tokens per Sec:  2347605, Lr: 0.000240
+2022-03-04 18:10:35,751 Epoch  29 Step:    25500 Batch Loss:     0.000029 Tokens per Sec:  2379740, Lr: 0.000240
+2022-03-04 18:10:49,510 Validation result at epoch  29, step    25500: Val DTW Score:  14.20, loss:   0.0008,  duration: 13.7581s
+2022-03-04 18:10:49,510 Training ended since minimum lr 0.000200 was reached.
+2022-03-04 18:10:49,514 Best validation result at step    21500:  13.15 dtw.
+2022-03-04 18:11:47,111 Progressive Transformers for End-to-End SLP
+2022-03-04 18:11:47,111 Progressive Transformers for End-to-End SLP
+2022-03-04 18:11:47,121 Total params: 16333824
+2022-03-04 18:11:47,121 Total params: 16333824
+2022-03-04 18:11:47,121 Trainable parameters: ['decoder.layer_norm.bias', 'decoder.layer_norm.weight', 'decoder.layers.0.dec_layer_norm.bias', 'decoder.layers.0.dec_layer_norm.weight', 'decoder.layers.0.feed_forward.layer_norm.bias', 'decoder.layers.0.feed_forward.layer_norm.weight', 'decoder.layers.0.feed_forward.pwff_layer.0.bias', 'decoder.layers.0.feed_forward.pwff_layer.0.weight', 'decoder.layers.0.feed_forward.pwff_layer.3.bias', 'decoder.layers.0.feed_forward.pwff_layer.3.weight', 'decoder.layers.0.src_trg_att.k_layer.bias', 'decoder.layers.0.src_trg_att.k_layer.weight', 'decoder.layers.0.src_trg_att.output_layer.bias', 'decoder.layers.0.src_trg_att.output_layer.weight', 'decoder.layers.0.src_trg_att.q_layer.bias', 'decoder.layers.0.src_trg_att.q_layer.weight', 'decoder.layers.0.src_trg_att.v_layer.bias', 'decoder.layers.0.src_trg_att.v_layer.weight', 'decoder.layers.0.trg_trg_att.k_layer.bias', 'decoder.layers.0.trg_trg_att.k_layer.weight', 'decoder.layers.0.trg_trg_att.output_layer.bias', 'decoder.layers.0.trg_trg_att.output_layer.weight', 'decoder.layers.0.trg_trg_att.q_layer.bias', 'decoder.layers.0.trg_trg_att.q_layer.weight', 'decoder.layers.0.trg_trg_att.v_layer.bias', 'decoder.layers.0.trg_trg_att.v_layer.weight', 'decoder.layers.0.x_layer_norm.bias', 'decoder.layers.0.x_layer_norm.weight', 'decoder.layers.1.dec_layer_norm.bias', 'decoder.layers.1.dec_layer_norm.weight', 'decoder.layers.1.feed_forward.layer_norm.bias', 'decoder.layers.1.feed_forward.layer_norm.weight', 'decoder.layers.1.feed_forward.pwff_layer.0.bias', 'decoder.layers.1.feed_forward.pwff_layer.0.weight', 'decoder.layers.1.feed_forward.pwff_layer.3.bias', 'decoder.layers.1.feed_forward.pwff_layer.3.weight', 'decoder.layers.1.src_trg_att.k_layer.bias', 'decoder.layers.1.src_trg_att.k_layer.weight', 'decoder.layers.1.src_trg_att.output_layer.bias', 'decoder.layers.1.src_trg_att.output_layer.weight', 'decoder.layers.1.src_trg_att.q_layer.bias', 'decoder.layers.1.src_trg_att.q_layer.weight', 'decoder.layers.1.src_trg_att.v_layer.bias', 'decoder.layers.1.src_trg_att.v_layer.weight', 'decoder.layers.1.trg_trg_att.k_layer.bias', 'decoder.layers.1.trg_trg_att.k_layer.weight', 'decoder.layers.1.trg_trg_att.output_layer.bias', 'decoder.layers.1.trg_trg_att.output_layer.weight', 'decoder.layers.1.trg_trg_att.q_layer.bias', 'decoder.layers.1.trg_trg_att.q_layer.weight', 'decoder.layers.1.trg_trg_att.v_layer.bias', 'decoder.layers.1.trg_trg_att.v_layer.weight', 'decoder.layers.1.x_layer_norm.bias', 'decoder.layers.1.x_layer_norm.weight', 'decoder.output_layer.weight', 'encoder.layer_norm.bias', 'encoder.layer_norm.weight', 'encoder.layers.0.feed_forward.layer_norm.bias', 'encoder.layers.0.feed_forward.layer_norm.weight', 'encoder.layers.0.feed_forward.pwff_layer.0.bias', 'encoder.layers.0.feed_forward.pwff_layer.0.weight', 'encoder.layers.0.feed_forward.pwff_layer.3.bias', 'encoder.layers.0.feed_forward.pwff_layer.3.weight', 'encoder.layers.0.layer_norm.bias', 'encoder.layers.0.layer_norm.weight', 'encoder.layers.0.src_src_att.k_layer.bias', 'encoder.layers.0.src_src_att.k_layer.weight', 'encoder.layers.0.src_src_att.output_layer.bias', 'encoder.layers.0.src_src_att.output_layer.weight', 'encoder.layers.0.src_src_att.q_layer.bias', 'encoder.layers.0.src_src_att.q_layer.weight', 'encoder.layers.0.src_src_att.v_layer.bias', 'encoder.layers.0.src_src_att.v_layer.weight', 'encoder.layers.1.feed_forward.layer_norm.bias', 'encoder.layers.1.feed_forward.layer_norm.weight', 'encoder.layers.1.feed_forward.pwff_layer.0.bias', 'encoder.layers.1.feed_forward.pwff_layer.0.weight', 'encoder.layers.1.feed_forward.pwff_layer.3.bias', 'encoder.layers.1.feed_forward.pwff_layer.3.weight', 'encoder.layers.1.layer_norm.bias', 'encoder.layers.1.layer_norm.weight', 'encoder.layers.1.src_src_att.k_layer.bias', 'encoder.layers.1.src_src_att.k_layer.weight', 'encoder.layers.1.src_src_att.output_layer.bias', 'encoder.layers.1.src_src_att.output_layer.weight', 'encoder.layers.1.src_src_att.q_layer.bias', 'encoder.layers.1.src_src_att.q_layer.weight', 'encoder.layers.1.src_src_att.v_layer.bias', 'encoder.layers.1.src_src_att.v_layer.weight', 'src_embed.lut.weight', 'trg_embed.bias', 'trg_embed.weight']
+2022-03-04 18:11:47,121 Trainable parameters: ['decoder.layer_norm.bias', 'decoder.layer_norm.weight', 'decoder.layers.0.dec_layer_norm.bias', 'decoder.layers.0.dec_layer_norm.weight', 'decoder.layers.0.feed_forward.layer_norm.bias', 'decoder.layers.0.feed_forward.layer_norm.weight', 'decoder.layers.0.feed_forward.pwff_layer.0.bias', 'decoder.layers.0.feed_forward.pwff_layer.0.weight', 'decoder.layers.0.feed_forward.pwff_layer.3.bias', 'decoder.layers.0.feed_forward.pwff_layer.3.weight', 'decoder.layers.0.src_trg_att.k_layer.bias', 'decoder.layers.0.src_trg_att.k_layer.weight', 'decoder.layers.0.src_trg_att.output_layer.bias', 'decoder.layers.0.src_trg_att.output_layer.weight', 'decoder.layers.0.src_trg_att.q_layer.bias', 'decoder.layers.0.src_trg_att.q_layer.weight', 'decoder.layers.0.src_trg_att.v_layer.bias', 'decoder.layers.0.src_trg_att.v_layer.weight', 'decoder.layers.0.trg_trg_att.k_layer.bias', 'decoder.layers.0.trg_trg_att.k_layer.weight', 'decoder.layers.0.trg_trg_att.output_layer.bias', 'decoder.layers.0.trg_trg_att.output_layer.weight', 'decoder.layers.0.trg_trg_att.q_layer.bias', 'decoder.layers.0.trg_trg_att.q_layer.weight', 'decoder.layers.0.trg_trg_att.v_layer.bias', 'decoder.layers.0.trg_trg_att.v_layer.weight', 'decoder.layers.0.x_layer_norm.bias', 'decoder.layers.0.x_layer_norm.weight', 'decoder.layers.1.dec_layer_norm.bias', 'decoder.layers.1.dec_layer_norm.weight', 'decoder.layers.1.feed_forward.layer_norm.bias', 'decoder.layers.1.feed_forward.layer_norm.weight', 'decoder.layers.1.feed_forward.pwff_layer.0.bias', 'decoder.layers.1.feed_forward.pwff_layer.0.weight', 'decoder.layers.1.feed_forward.pwff_layer.3.bias', 'decoder.layers.1.feed_forward.pwff_layer.3.weight', 'decoder.layers.1.src_trg_att.k_layer.bias', 'decoder.layers.1.src_trg_att.k_layer.weight', 'decoder.layers.1.src_trg_att.output_layer.bias', 'decoder.layers.1.src_trg_att.output_layer.weight', 'decoder.layers.1.src_trg_att.q_layer.bias', 'decoder.layers.1.src_trg_att.q_layer.weight', 'decoder.layers.1.src_trg_att.v_layer.bias', 'decoder.layers.1.src_trg_att.v_layer.weight', 'decoder.layers.1.trg_trg_att.k_layer.bias', 'decoder.layers.1.trg_trg_att.k_layer.weight', 'decoder.layers.1.trg_trg_att.output_layer.bias', 'decoder.layers.1.trg_trg_att.output_layer.weight', 'decoder.layers.1.trg_trg_att.q_layer.bias', 'decoder.layers.1.trg_trg_att.q_layer.weight', 'decoder.layers.1.trg_trg_att.v_layer.bias', 'decoder.layers.1.trg_trg_att.v_layer.weight', 'decoder.layers.1.x_layer_norm.bias', 'decoder.layers.1.x_layer_norm.weight', 'decoder.output_layer.weight', 'encoder.layer_norm.bias', 'encoder.layer_norm.weight', 'encoder.layers.0.feed_forward.layer_norm.bias', 'encoder.layers.0.feed_forward.layer_norm.weight', 'encoder.layers.0.feed_forward.pwff_layer.0.bias', 'encoder.layers.0.feed_forward.pwff_layer.0.weight', 'encoder.layers.0.feed_forward.pwff_layer.3.bias', 'encoder.layers.0.feed_forward.pwff_layer.3.weight', 'encoder.layers.0.layer_norm.bias', 'encoder.layers.0.layer_norm.weight', 'encoder.layers.0.src_src_att.k_layer.bias', 'encoder.layers.0.src_src_att.k_layer.weight', 'encoder.layers.0.src_src_att.output_layer.bias', 'encoder.layers.0.src_src_att.output_layer.weight', 'encoder.layers.0.src_src_att.q_layer.bias', 'encoder.layers.0.src_src_att.q_layer.weight', 'encoder.layers.0.src_src_att.v_layer.bias', 'encoder.layers.0.src_src_att.v_layer.weight', 'encoder.layers.1.feed_forward.layer_norm.bias', 'encoder.layers.1.feed_forward.layer_norm.weight', 'encoder.layers.1.feed_forward.pwff_layer.0.bias', 'encoder.layers.1.feed_forward.pwff_layer.0.weight', 'encoder.layers.1.feed_forward.pwff_layer.3.bias', 'encoder.layers.1.feed_forward.pwff_layer.3.weight', 'encoder.layers.1.layer_norm.bias', 'encoder.layers.1.layer_norm.weight', 'encoder.layers.1.src_src_att.k_layer.bias', 'encoder.layers.1.src_src_att.k_layer.weight', 'encoder.layers.1.src_src_att.output_layer.bias', 'encoder.layers.1.src_src_att.output_layer.weight', 'encoder.layers.1.src_src_att.q_layer.bias', 'encoder.layers.1.src_src_att.q_layer.weight', 'encoder.layers.1.src_src_att.v_layer.bias', 'encoder.layers.1.src_src_att.v_layer.weight', 'src_embed.lut.weight', 'trg_embed.bias', 'trg_embed.weight']
+2022-03-04 18:11:47,124 Continuing model from ./Models/Base/25500_every.ckpt
+2022-03-04 18:11:47,124 Continuing model from ./Models/Base/25500_every.ckpt
+
