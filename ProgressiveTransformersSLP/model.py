@@ -312,15 +312,15 @@ def build_model(cfg: dict = None,
     ## Encoder -------
     enc_dropout = cfg["encoder"].get("dropout", 0.) # Dropout
     enc_emb_dropout = cfg["encoder"]["embeddings"].get("dropout", enc_dropout)
-    assert (enc_embed_dim == enc_hidden_size,
-            "for transformer, emb_size must be hidden_size")
+    assert enc_embed_dim == enc_hidden_size, \
+            "for transformer, emb_size must be hidden_size"
 
     # Transformer Encoder
     encoder = TransformerEncoder(
         hidden_size=enc_hidden_size,
         ff_size=cfg["encoder"]["ff_size"],
-        num_layers=cfg["encoder"]["n_layers"],
-        num_heads=cfg["encoder"]["n_heads"],
+        num_layers=cfg["encoder"]["num_layers"],
+        num_heads=cfg["encoder"]["num_heads"],
         emb_size=src_embed.embedding_dim,
         emb_dropout=enc_emb_dropout
     )

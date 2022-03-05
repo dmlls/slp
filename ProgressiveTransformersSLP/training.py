@@ -751,7 +751,7 @@ def test(cfg_file, ckpt: str = None) -> None:
             eval_metric=eval_metric,
             loss_function=None,
             batch_type=batch_type,
-            type="val" if not data_set_name is "train" else "train_inf",
+            type="val" if data_set_name != "train" else "train_inf",
         )
 
         # Set which sequences to produce video for
