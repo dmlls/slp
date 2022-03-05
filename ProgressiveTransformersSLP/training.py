@@ -440,9 +440,9 @@ class TrainManager:
             input = inputs[i]
             # Write gloss label
             gloss_label = input[0]
-            if input[1] is not "</s>":
+            if input[1] is not constants.BOS_TOKEN:
                 gloss_label += "_" + input[1]
-            if input[2] is not "</s>":
+            if input[2] is not constants.BOS_TOKEN:
                 gloss_label += "_" + input[2]
 
             # Alter the dtw timing of the produced sequence, and collect the DTW score
