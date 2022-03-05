@@ -12,7 +12,7 @@ from torchtext.data import Dataset
 
 from batch import Batch
 from builders import build_gradient_clipper, build_optimizer, build_scheduler
-from constants import TARGET_PAD
+from constants import TARGET_PAD, initialize_constants
 from data import load_data, make_data_iter
 from helpers import (
     ConfigurationError,
