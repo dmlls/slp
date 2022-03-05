@@ -14,7 +14,7 @@ from torchtext.data import Dataset
 
 from batch import Batch
 from builders import build_gradient_clipper, build_optimizer, build_scheduler
-from constants import TARGET_PAD, initialize_constants
+from constants import initialize_constants
 from data import load_data, make_data_iter
 from helpers import (
     ConfigurationError,
@@ -33,7 +33,6 @@ from plot_videos import alter_DTW_timing, plot_video
 from prediction import validate_on_data
 from builders import build_optimizer, build_scheduler, \
     build_gradient_clipper
-from constants import initialize_constants
 
 
 class TrainManager:
