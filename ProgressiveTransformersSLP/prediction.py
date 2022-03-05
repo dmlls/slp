@@ -10,7 +10,7 @@ from helpers import bpe_postprocess, load_config, get_latest_checkpoint, \
 from model import build_model, Model
 from batch import Batch
 from data import load_data, make_data_iter
-from constants import UNK_TOKEN, PAD_TOKEN, EOS_TOKEN
+from constants import PAD_TOKEN
 
 # Validate epoch given a dataset
 def validate_on_data(model: Model,

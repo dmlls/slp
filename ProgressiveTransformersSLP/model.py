@@ -3,16 +3,16 @@
 Module to represents whole models
 """
 
+import torch
 import numpy as np
 import torch.nn as nn
 from torch import Tensor
-import torch
+import constants
 
 from initialization import initialize_model
 from embeddings import Embeddings
 from encoders import Encoder, TransformerEncoder
 from decoders import Decoder, TransformerDecoder
-from constants import PAD_TOKEN, EOS_TOKEN, BOS_TOKEN, TARGET_PAD
 from search import greedy
 from vocabulary import Vocabulary
 from batch import Batch
@@ -54,10 +54,10 @@ class Model(nn.Module):
         self.decoder = decoder
         self.src_vocab = src_vocab
         self.trg_vocab = trg_vocab
-        self.bos_index = self.src_vocab.stoi[BOS_TOKEN]
-        self.pad_index = self.src_vocab.stoi[PAD_TOKEN]
-        self.eos_index = self.src_vocab.stoi[EOS_TOKEN]
-        self.target_pad = TARGET_PAD
+        self.bos_index = self.src_vocab.stoi[constants.BOS_TOKEN]
+        self.pad_index = self.src_vocab.stoi[constants.PAD_TOKEN]
+        self.eos_index = self.src_vocab.stoi[constants.EOS_TOKEN]
+        self.target_pad = constants.TARGET_PAD
 
         self.use_cuda = cfg["training"]["use_cuda"]
 
@@ -163,7 +163,7 @@ class Model(nn.Module):
         :return: decoder outputs (outputs, hidden, att_probs, att_vectors)
         """
 
-        # Enbed the target using a linear layer
+        # Embed the target using a linear layer
         trg_embed = self.trg_embed(trg_input)
         # Apply decoder to the embedded target
         decoder_output = self.decoder(trg_embed=trg_embed, encoder_output=encoder_output,
@@ -254,12 +254,14 @@ class Model(nn.Module):
 
 def build_model(cfg: dict = None,
                 src_vocab: Vocabulary = None,
+                pretrained_embed: Tensor = None,
                 trg_vocab: Vocabulary = None) -> Model:
     """
     Build and initialize the model according to the configuration.
 
     :param cfg: dictionary configuration containing model specifications
     :param src_vocab: source vocabulary
+    :param src_embed: pretrained embeddings
     :param trg_vocab: target vocabulary
     :return: built and initialized model
     """
@@ -267,7 +269,7 @@ def build_model(cfg: dict = None,
     full_cfg = cfg
     cfg = cfg["model"]
 
-    src_padding_idx = src_vocab.stoi[PAD_TOKEN]
+    src_padding_idx = src_vocab.stoi[constants.PAD_TOKEN]
     trg_padding_idx = 0
 
     # Input target size is the joint vector length plus one for counter
@@ -289,8 +291,8 @@ def build_model(cfg: dict = None,
 
     # Define source embedding
     src_embed = Embeddings(
-        **cfg["encoder"]["embeddings"], vocab_size=len(src_vocab),
-        padding_idx=src_padding_idx)
+        **cfg["encoder"]["embeddings"], pretrained_embed=pretrained_embed,
+        vocab_size=len(src_vocab), padding_idx=src_padding_idx)
 
     # Define target linear
     # Linear layer replaces an embedding layer - as this takes in the joints size as opposed to a token
