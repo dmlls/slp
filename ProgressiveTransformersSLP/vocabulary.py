@@ -17,12 +17,16 @@ logging.set_verbosity_warning()
 
 
 class Vocabulary:
-    """ Vocabulary represents mapping between tokens and indices. """
+    """ Vocabulary represents mapping between tokens and indices."""
 
-    def __init__(self, tokens: List[str] = None, file: str = None) -> None:
+    def __init__(self, model: str = None, tokens: List[str] = None, file: str = None) -> None:
 
         # don't rename stoi and itos since needed for torchtext
         # warning: stoi grows with unknown tokens, don't use for saving or size
+
+        # If using pretrained embeddings, this is the model the embeddings
+        # come from (e.g., BERT).
+        self.model = model
 
         # special symbols
         self.specials = [constants.UNK_TOKEN,
@@ -45,7 +49,10 @@ class Vocabulary:
 
         :param tokens: list of tokens
         """
-        self.add_tokens(tokens=self.specials+tokens)
+        if self.model == "bert":
+            self.add_tokens(tokens=tokens)
+        else:  # model = None
+            self.add_tokens(tokens=self.specials+tokens)
         assert len(self.stoi) == len(self.itos)
 
     def _from_file(self, file: str) -> None:
@@ -203,11 +210,11 @@ def build_vocab(
 
     elif model == "bert":
         tokenizer = AutoTokenizer.from_pretrained("bert-base-german-cased")
-        model = AutoModelForMaskedLM.from_pretrained("bert-base-german-cased")
+        embed_model = AutoModelForMaskedLM.from_pretrained("bert-base-german-cased")
         vocab = [token for token in tokenizer.get_vocab().items()]  # tokens and its ids
-        embeddings = torch.stack([model.get_input_embeddings()(torch.tensor(token[1]))
+        embeddings = torch.stack([embed_model.get_input_embeddings()(torch.tensor(token[1]))
                                   for token in vocab])
-        vocab = Vocabulary(tokens=[token[0] for token in vocab])
+        vocab = Vocabulary(model=model, tokens=[token[0] for token in vocab])
     else:
         raise ValueError(f"embeddings from model {model} not supported")
 
