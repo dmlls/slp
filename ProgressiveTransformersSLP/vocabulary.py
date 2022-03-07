@@ -209,8 +209,8 @@ def build_vocab(
             assert not vocab.is_unk(s)
 
     elif model == "bert":
-        tokenizer = AutoTokenizer.from_pretrained("bert-base-german-cased")
-        embed_model = AutoModelForMaskedLM.from_pretrained("bert-base-german-cased")
+        tokenizer = AutoTokenizer.from_pretrained("dbmdz/bert-base-german-uncased")
+        embed_model = AutoModelForMaskedLM.from_pretrained("dbmdz/bert-base-german-uncased")
         vocab = [token for token in tokenizer.get_vocab().items()]  # tokens and its ids
         embeddings = torch.stack([embed_model.get_input_embeddings()(torch.tensor(token[1]))
                                   for token in vocab])
