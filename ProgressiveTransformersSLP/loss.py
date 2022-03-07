@@ -1,9 +1,9 @@
-# coding: utf-8
 """
 Module to implement training loss
 """
 
-from torch import nn, Tensor
+from torch import Tensor, nn
+
 
 class RegLoss(nn.Module):
     """
@@ -32,7 +32,7 @@ class RegLoss(nn.Module):
     # pylint: disable=arguments-differ
     def forward(self, preds, targets):
 
-        loss_mask = (targets != self.target_pad)
+        loss_mask = targets != self.target_pad
 
         # Find the masked predictions and targets using loss mask
         preds_masked = preds * loss_mask
@@ -47,6 +47,7 @@ class RegLoss(nn.Module):
 
         return loss
 
+
 class XentLoss(nn.Module):
     """
     Cross-Entropy Loss with optional label smoothing
@@ -57,8 +58,7 @@ class XentLoss(nn.Module):
         self.smoothing = smoothing
         self.pad_index = pad_index
         # standard xent loss
-        self.criterion = nn.NLLLoss(ignore_index=self.pad_index,
-                                    reduction='sum')
+        self.criterion = nn.NLLLoss(ignore_index=self.pad_index, reduction='sum')
 
     # pylint: disable=arguments-differ
     def forward(self, log_probs, targets):
@@ -74,6 +74,7 @@ class XentLoss(nn.Module):
         # targets: indices with batch*seq_len
         targets = targets.contiguous().view(-1)
         loss = self.criterion(
-            log_probs.contiguous().view(-1, log_probs.size(-1)), targets)
+            log_probs.contiguous().view(-1, log_probs.size(-1)), targets
+        )
 
         return loss

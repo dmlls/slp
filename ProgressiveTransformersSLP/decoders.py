@@ -1,9 +1,9 @@
 import torch.nn as nn
 from torch import Tensor
 
-from helpers import freeze_params, ConfigurationError, subsequent_mask, uneven_subsequent_mask
-from transformer_layers import PositionalEncoding, \
-    TransformerDecoderLayer
+from helpers import freeze_params, subsequent_mask
+from transformer_layers import PositionalEncoding, TransformerDecoderLayer
+
 
 class Decoder(nn.Module):
     """
@@ -19,24 +19,27 @@ class Decoder(nn.Module):
         """
         return self._output_size
 
+
 class TransformerDecoder(Decoder):
     """
     A transformer decoder with N masked layers.
     Decoder layers are masked so that an attention head cannot see the future.
     """
 
-    def __init__(self,
-                 num_layers: int = 4,
-                 num_heads: int = 8,
-                 hidden_size: int = 512,
-                 ff_size: int = 2048,
-                 dropout: float = 0.1,
-                 emb_dropout: float = 0.1,
-                 vocab_size: int = 1,
-                 freeze: bool = False,
-                 trg_size: int = 97,
-                 decoder_trg_trg_: bool = True,
-                 **kwargs):
+    def __init__(
+        self,
+        num_layers: int = 4,
+        num_heads: int = 8,
+        hidden_size: int = 512,
+        ff_size: int = 2048,
+        dropout: float = 0.1,
+        emb_dropout: float = 0.1,
+        vocab_size: int = 1,
+        freeze: bool = False,
+        trg_size: int = 97,
+        decoder_trg_trg_: bool = True,
+        **kwargs
+    ):
         """
         Initialize a Transformer decoder.
 
@@ -58,11 +61,20 @@ class TransformerDecoder(Decoder):
         self._output_size = trg_size
 
         # create num_layers decoder layers and put them in a list
-        self.layers = nn.ModuleList([TransformerDecoderLayer(
-                size=hidden_size, ff_size=ff_size, num_heads=num_heads,
-                dropout=dropout, decoder_trg_trg=decoder_trg_trg_) for _ in range(num_layers)])
+        self.layers = nn.ModuleList(
+            [
+                TransformerDecoderLayer(
+                    size=hidden_size,
+                    ff_size=ff_size,
+                    num_heads=num_heads,
+                    dropout=dropout,
+                    decoder_trg_trg=decoder_trg_trg_,
+                )
+                for _ in range(num_layers)
+            ]
+        )
 
-        self.pe = PositionalEncoding(hidden_size,mask_count=True)
+        self.pe = PositionalEncoding(hidden_size, mask_count=True)
         self.layer_norm = nn.LayerNorm(hidden_size, eps=1e-6)
 
         self.emb_dropout = nn.Dropout(p=emb_dropout)
@@ -73,12 +85,14 @@ class TransformerDecoder(Decoder):
         if freeze:
             freeze_params(self)
 
-    def forward(self,
-                trg_embed: Tensor = None,
-                encoder_output: Tensor = None,
-                src_mask: Tensor = None,
-                trg_mask: Tensor = None,
-                **kwargs):
+    def forward(
+        self,
+        trg_embed: Tensor = None,
+        encoder_output: Tensor = None,
+        src_mask: Tensor = None,
+        trg_mask: Tensor = None,
+        **kwargs
+    ):
         """
         Transformer decoder forward pass.
 
@@ -102,13 +116,17 @@ class TransformerDecoder(Decoder):
 
         padding_mask = trg_mask
         # Create subsequent mask for decoding
-        sub_mask = subsequent_mask(
-            trg_embed.size(1)).type_as(trg_mask)
+        sub_mask = subsequent_mask(trg_embed.size(1)).type_as(trg_mask)
 
         # Apply each layer to the input
         for layer in self.layers:
-            x = layer(x=x, memory=encoder_output,
-                      src_mask=src_mask, trg_mask=sub_mask, padding_mask=padding_mask)
+            x = layer(
+                x=x,
+                memory=encoder_output,
+                src_mask=src_mask,
+                trg_mask=sub_mask,
+                padding_mask=padding_mask,
+            )
 
         # Apply a layer normalisation
         x = self.layer_norm(x)
@@ -119,5 +137,7 @@ class TransformerDecoder(Decoder):
 
     def __repr__(self):
         return "%s(num_layers=%r, num_heads=%r)" % (
-            self.__class__.__name__, len(self.layers),
-            self.layers[0].trg_trg_att.num_heads)
+            self.__class__.__name__,
+            len(self.layers),
+            self.layers[0].trg_trg_att.num_heads,
+        )

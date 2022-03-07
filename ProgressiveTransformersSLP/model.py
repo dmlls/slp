@@ -3,36 +3,38 @@
 Module to represents whole models
 """
 
-import torch
 import numpy as np
+import torch
 import torch.nn as nn
 from torch import Tensor
-import constants
 
-from initialization import initialize_model
+import constants
+from batch import Batch
+from decoders import Decoder, TransformerDecoder
 from embeddings import Embeddings
 from encoders import Encoder, TransformerEncoder
-from decoders import Decoder, TransformerDecoder
+from initialization import initialize_model
 from search import greedy
 from vocabulary import Vocabulary
-from batch import Batch
+
 
 class Model(nn.Module):
     """
     Base Model class
     """
 
-    def __init__(self,
-                 encoder: Encoder,
-                 decoder: Decoder,
-                 src_embed: Embeddings,
-                 trg_embed: Embeddings,
-                 src_vocab: Vocabulary,
-                 trg_vocab: Vocabulary,
-                 cfg: dict,
-                 in_trg_size: int,
-                 out_trg_size: int,
-                 ) -> None:
+    def __init__(
+        self,
+        encoder: Encoder,
+        decoder: Decoder,
+        src_embed: Embeddings,
+        trg_embed: Embeddings,
+        src_vocab: Vocabulary,
+        trg_vocab: Vocabulary,
+        cfg: dict,
+        in_trg_size: int,
+        out_trg_size: int,
+    ) -> None:
         """
         Create a new encoder-decoder model
 
@@ -63,11 +65,11 @@ class Model(nn.Module):
 
         self.in_trg_size = in_trg_size
         self.out_trg_size = out_trg_size
-        self.count_in = model_cfg.get("count_in",True)
+        self.count_in = model_cfg.get("count_in", True)
         # Just Counter
-        self.just_count_in = model_cfg.get("just_count_in",False)
+        self.just_count_in = model_cfg.get("just_count_in", False)
         # Gaussian Noise
-        self.gaussian_noise = model_cfg.get("gaussian_noise",False)
+        self.gaussian_noise = model_cfg.get("gaussian_noise", False)
         # Gaussian Noise
         if self.gaussian_noise:
             self.noise_rate = model_cfg.get("noise_rate", 1.0)
@@ -76,14 +78,15 @@ class Model(nn.Module):
         self.future_prediction = model_cfg.get("future_prediction", 0)
 
     # pylint: disable=arguments-differ
-    def forward(self,
-                src: Tensor,
-                trg_input: Tensor,
-                src_mask: Tensor,
-                src_lengths: Tensor,
-                trg_mask: Tensor = None,
-                src_input: Tensor = None) -> (
-        Tensor, Tensor, Tensor, Tensor):
+    def forward(
+        self,
+        src: Tensor,
+        trg_input: Tensor,
+        src_mask: Tensor,
+        src_lengths: Tensor,
+        trg_mask: Tensor = None,
+        src_input: Tensor = None,
+    ) -> (Tensor, Tensor, Tensor, Tensor):
         """
         First encodes the source sentence.
         Then produces the target one word at a time.
@@ -97,9 +100,9 @@ class Model(nn.Module):
         """
 
         # Encode the source sequence
-        encoder_output, encoder_hidden = self.encode(src=src,
-                                                     src_length=src_lengths,
-                                                     src_mask=src_mask)
+        encoder_output, encoder_hidden = self.encode(
+            src=src, src_length=src_lengths, src_mask=src_mask
+        )
         unroll_steps = trg_input.size(1)
 
         # Add gaussian noise to the target inputs, if in training
@@ -108,29 +111,35 @@ class Model(nn.Module):
             # Create a normal distribution of random numbers between 0-1
             noise = trg_input.data.new(trg_input.size()).normal_(0, 1)
             # Zero out the noise over the counter
-            noise[:,:,-1] = torch.zeros_like(noise[:, :, -1])
+            noise[:, :, -1] = torch.zeros_like(noise[:, :, -1])
 
             # Need to add a zero on the end of
             if self.future_prediction != 0:
-                self.out_stds = torch.cat((self.out_stds,torch.zeros_like(self.out_stds)))[:trg_input.shape[-1]]
+                self.out_stds = torch.cat(
+                    (self.out_stds, torch.zeros_like(self.out_stds))
+                )[: trg_input.shape[-1]]
 
             # Need to multiply by the standard deviations
             noise = noise * self.out_stds
 
             # Add to trg_input multiplied by the noise rate
-            trg_input = trg_input + self.noise_rate*noise
+            trg_input = trg_input + self.noise_rate * noise
 
         # Decode the target sequence
-        skel_out, dec_hidden, _, _ = self.decode(encoder_output=encoder_output,
-                                                 src_mask=src_mask, trg_input=trg_input,
-                                                 trg_mask=trg_mask)
+        skel_out, dec_hidden, _, _ = self.decode(
+            encoder_output=encoder_output,
+            src_mask=src_mask,
+            trg_input=trg_input,
+            trg_mask=trg_mask,
+        )
 
         gloss_out = None
 
         return skel_out, gloss_out
 
-    def encode(self, src: Tensor, src_length: Tensor, src_mask: Tensor) \
-        -> (Tensor, Tensor):
+    def encode(
+        self, src: Tensor, src_length: Tensor, src_mask: Tensor
+    ) -> (Tensor, Tensor):
         """
         Encodes the source sentence.
 
@@ -144,11 +153,13 @@ class Model(nn.Module):
 
         return encode_output
 
-
-    def decode(self, encoder_output: Tensor,
-               src_mask: Tensor, trg_input: Tensor,
-               trg_mask: Tensor = None) \
-        -> (Tensor, Tensor, Tensor, Tensor):
+    def decode(
+        self,
+        encoder_output: Tensor,
+        src_mask: Tensor,
+        trg_input: Tensor,
+        trg_mask: Tensor = None,
+    ) -> (Tensor, Tensor, Tensor, Tensor):
 
         """
         Decode, given an encoded source sentence.
@@ -166,13 +177,16 @@ class Model(nn.Module):
         # Embed the target using a linear layer
         trg_embed = self.trg_embed(trg_input)
         # Apply decoder to the embedded target
-        decoder_output = self.decoder(trg_embed=trg_embed, encoder_output=encoder_output,
-                               src_mask=src_mask,trg_mask=trg_mask)
+        decoder_output = self.decoder(
+            trg_embed=trg_embed,
+            encoder_output=encoder_output,
+            src_mask=src_mask,
+            trg_mask=trg_mask,
+        )
 
         return decoder_output
 
-    def get_loss_for_batch(self, batch: Batch, loss_function: nn.Module) \
-            -> Tensor:
+    def get_loss_for_batch(self, batch: Batch, loss_function: nn.Module) -> Tensor:
         """
         Compute non-normalized loss and number of tokens for a batch
 
@@ -183,9 +197,12 @@ class Model(nn.Module):
         """
         # Forward through the batch input
         skel_out, _ = self.forward(
-            src=batch.src, trg_input=batch.trg_input,
-            src_mask=batch.src_mask, src_lengths=batch.src_lengths,
-            trg_mask=batch.trg_mask)
+            src=batch.src,
+            trg_input=batch.trg_input,
+            src_mask=batch.src_mask,
+            src_lengths=batch.src_lengths,
+            trg_mask=batch.trg_mask,
+        )
 
         # compute batch loss using skel_out and the batch target
         batch_loss = loss_function(skel_out, batch.trg)
@@ -198,7 +215,7 @@ class Model(nn.Module):
 
             if self.future_prediction != 0:
                 # Cut to only the first frame prediction + add the counter
-                noise = noise[:, :, :noise.shape[2] // (self.future_prediction)]
+                noise = noise[:, :, : noise.shape[2] // (self.future_prediction)]
 
         else:
             noise = None
@@ -206,7 +223,11 @@ class Model(nn.Module):
         # return batch loss = sum over all elements in batch that are not pad
         return batch_loss, noise
 
-    def run_batch(self, batch: Batch, max_output_length: int,) -> (np.array, np.array):
+    def run_batch(
+        self,
+        batch: Batch,
+        max_output_length: int,
+    ) -> (np.array, np.array):
         """
         Get outputs and attentions scores for a given batch
 
@@ -219,8 +240,8 @@ class Model(nn.Module):
         """
         # First encode the batch, as this can be done in all one go
         encoder_output, encoder_hidden = self.encode(
-            batch.src, batch.src_lengths,
-            batch.src_mask)
+            batch.src, batch.src_lengths, batch.src_mask
+        )
 
         # if maximum output length is not globally specified, adapt to src len
         if max_output_length is None:
@@ -229,12 +250,13 @@ class Model(nn.Module):
         # Then decode the batch separately, as needs to be done iteratively
         # greedy decoding
         stacked_output, stacked_attention_scores = greedy(
-                encoder_output=encoder_output,
-                src_mask=batch.src_mask,
-                embed=self.trg_embed,
-                decoder=self.decoder,
-                trg_input=batch.trg_input,
-                model=self)
+            encoder_output=encoder_output,
+            src_mask=batch.src_mask,
+            embed=self.trg_embed,
+            decoder=self.decoder,
+            trg_input=batch.trg_input,
+            model=self,
+        )
 
         return stacked_output, stacked_attention_scores
 
@@ -244,18 +266,28 @@ class Model(nn.Module):
 
         :return: string representation
         """
-        return "%s(\n" \
-               "\tencoder=%s,\n" \
-               "\tdecoder=%s,\n" \
-               "\tsrc_embed=%s,\n" \
-               "\ttrg_embed=%s)" % (self.__class__.__name__, self.encoder,
-                   self.decoder, self.src_embed, self.trg_embed)
+        return (
+            "%s(\n"
+            "\tencoder=%s,\n"
+            "\tdecoder=%s,\n"
+            "\tsrc_embed=%s,\n"
+            "\ttrg_embed=%s)"
+            % (
+                self.__class__.__name__,
+                self.encoder,
+                self.decoder,
+                self.src_embed,
+                self.trg_embed,
+            )
+        )
 
 
-def build_model(cfg: dict = None,
-                src_vocab: Vocabulary = None,
-                pretrained_embed: Tensor = None,
-                trg_vocab: Vocabulary = None) -> Model:
+def build_model(
+    cfg: dict = None,
+    src_vocab: Vocabulary = None,
+    pretrained_embed: Tensor = None,
+    trg_vocab: Vocabulary = None,
+) -> Model:
     """
     Build and initialize the model according to the configuration.
 
@@ -287,7 +319,7 @@ def build_model(cfg: dict = None,
     # Future Prediction increases the output target size
     if future_prediction != 0:
         # Times the trg_size (minus counter) by amount of predicted frames, and then add back counter
-        out_trg_size = (out_trg_size - 1 ) * future_prediction + 1
+        out_trg_size = (out_trg_size - 1) * future_prediction + 1
 
     enc_embed_dim = cfg["encoder"]["embeddings"]["embedding_dim"]
     enc_hidden_size = cfg["encoder"]["hidden_size"]
@@ -295,14 +327,15 @@ def build_model(cfg: dict = None,
     dec_hidden_size = cfg["decoder"]["hidden_size"]
 
     if cfg["encoder"]["embeddings"]["model"] == "bert":
-        enc_embed_dim, enc_hidden_size, dec_embed_dim, dec_hidden_size = [768]*4
+        enc_embed_dim, enc_hidden_size, dec_embed_dim, dec_hidden_size = [768] * 4
 
     # Define source embedding
     src_embed = Embeddings(
         model=cfg["encoder"]["embeddings"]["model"],
         embedding_dim=enc_embed_dim,
         pretrained_embed=pretrained_embed,
-        vocab_size=len(src_vocab), padding_idx=src_padding_idx
+        vocab_size=len(src_vocab),
+        padding_idx=src_padding_idx,
     )
 
     # Define target linear
@@ -310,10 +343,11 @@ def build_model(cfg: dict = None,
     trg_linear = nn.Linear(in_trg_size, dec_embed_dim)
 
     ## Encoder -------
-    enc_dropout = cfg["encoder"].get("dropout", 0.) # Dropout
+    enc_dropout = cfg["encoder"].get("dropout", 0.0)  # Dropout
     enc_emb_dropout = cfg["encoder"]["embeddings"].get("dropout", enc_dropout)
-    assert enc_embed_dim == enc_hidden_size, \
-            "for transformer, emb_size must be hidden_size"
+    assert (
+        enc_embed_dim == enc_hidden_size
+    ), "for transformer, emb_size must be hidden_size"
 
     # Transformer Encoder
     encoder = TransformerEncoder(
@@ -322,11 +356,11 @@ def build_model(cfg: dict = None,
         num_layers=cfg["encoder"]["num_layers"],
         num_heads=cfg["encoder"]["num_heads"],
         emb_size=src_embed.embedding_dim,
-        emb_dropout=enc_emb_dropout
+        emb_dropout=enc_emb_dropout,
     )
 
     ## Decoder -------
-    dec_dropout = cfg["decoder"].get("dropout", 0.) # Dropout
+    dec_dropout = cfg["decoder"].get("dropout", 0.0)  # Dropout
     dec_emb_dropout = cfg["decoder"]["embeddings"].get("dropout", dec_dropout)
     decoder_trg_trg = cfg["decoder"].get("decoder_trg_trg", True)
     # Transformer Decoder
@@ -341,19 +375,21 @@ def build_model(cfg: dict = None,
         emb_size=trg_linear.out_features,
         emb_dropout=dec_emb_dropout,
         trg_size=out_trg_size,
-        decoder_trg_trg_=decoder_trg_trg
+        decoder_trg_trg_=decoder_trg_trg,
     )
 
     # Define the model
-    model = Model(encoder=encoder,
-                  decoder=decoder,
-                  src_embed=src_embed,
-                  trg_embed=trg_linear,
-                  src_vocab=src_vocab,
-                  trg_vocab=trg_vocab,
-                  cfg=full_cfg,
-                  in_trg_size=in_trg_size,
-                  out_trg_size=out_trg_size)
+    model = Model(
+        encoder=encoder,
+        decoder=decoder,
+        src_embed=src_embed,
+        trg_embed=trg_linear,
+        src_vocab=src_vocab,
+        trg_vocab=trg_vocab,
+        cfg=full_cfg,
+        in_trg_size=in_trg_size,
+        out_trg_size=out_trg_size,
+    )
 
     # Custom initialization of model parameters
     initialize_model(model, cfg, src_padding_idx, trg_padding_idx)

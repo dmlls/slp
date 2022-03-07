@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
 Implements custom initialization
 """
@@ -12,7 +10,7 @@ from torch import Tensor
 from torch.nn.init import _calculate_fan_in_and_fan_out
 
 
-def xavier_uniform_n_(w: Tensor, gain: float = 1., n: int = 4) -> None:
+def xavier_uniform_n_(w: Tensor, gain: float = 1.0, n: int = 4) -> None:
     """
     Xavier initializer for parameters that combine multiple matrices in one
     parameter for efficiency. This is e.g. used for GRU and LSTM parameters,
@@ -32,8 +30,9 @@ def xavier_uniform_n_(w: Tensor, gain: float = 1., n: int = 4) -> None:
 
 
 # pylint: disable=too-many-branches
-def initialize_model(model: nn.Module, cfg: dict, src_padding_idx: int,
-                     trg_padding_idx: int) -> None:
+def initialize_model(
+    model: nn.Module, cfg: dict, src_padding_idx: int, trg_padding_idx: int
+) -> None:
     """
     This initializes a model based on the provided config.
 
@@ -80,13 +79,13 @@ def initialize_model(model: nn.Module, cfg: dict, src_padding_idx: int,
     # pylint: disable=unnecessary-lambda, no-else-return
     def _parse_init(s, scale, _gain):
         scale = float(scale)
-        assert scale > 0., "incorrect init_weight"
+        assert scale > 0.0, "incorrect init_weight"
         if s.lower() == "xavier":
             return lambda p: nn.init.xavier_uniform_(p, gain=_gain)
         elif s.lower() == "uniform":
             return lambda p: nn.init.uniform_(p, a=-scale, b=scale)
         elif s.lower() == "normal":
-            return lambda p: nn.init.normal_(p, mean=0., std=scale)
+            return lambda p: nn.init.normal_(p, mean=0.0, std=scale)
         elif s.lower() == "zeros":
             return lambda p: nn.init.zeros_(p)
         else:
