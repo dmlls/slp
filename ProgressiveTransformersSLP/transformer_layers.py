@@ -1,17 +1,16 @@
-# -*- coding: utf-8 -*-
-
 import math
+
+import numpy as np
 import torch
 import torch.nn as nn
-from torch import Tensor
-import numpy as np
 import torch.nn.functional as F
+from torch import Tensor
+
 import constants
 
 
 # pylint: disable=arguments-differ
 class MultiHeadedAttention(nn.Module):
-
     def __init__(self, num_heads: int, size: int, dropout: float = 0.1):
 
         super(MultiHeadedAttention, self).__init__()
@@ -31,7 +30,14 @@ class MultiHeadedAttention(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.target_pad = constants.TARGET_PAD
 
-    def forward(self, k: Tensor, v: Tensor, q: Tensor, mask: Tensor = None, padding_mask: Tensor = None):
+    def forward(
+        self,
+        k: Tensor,
+        v: Tensor,
+        q: Tensor,
+        mask: Tensor = None,
+        padding_mask: Tensor = None,
+    ):
 
         batch_size = k.size(0)
         num_heads = self.num_heads
@@ -66,8 +72,11 @@ class MultiHeadedAttention(nn.Module):
 
         # get context vector (select values with attention) and reshape
         context = torch.matmul(attention, v)
-        context = context.transpose(1, 2).contiguous().view(
-            batch_size, -1, num_heads * self.head_size)
+        context = (
+            context.transpose(1, 2)
+            .contiguous()
+            .view(batch_size, -1, num_heads * self.head_size)
+        )
 
         output = self.output_layer(context)
 
@@ -76,7 +85,6 @@ class MultiHeadedAttention(nn.Module):
 
 # pylint: disable=arguments-differ
 class PositionwiseFeedForward(nn.Module):
-
     def __init__(self, input_size, ff_size, dropout=0.1):
 
         super(PositionwiseFeedForward, self).__init__()
@@ -96,19 +104,23 @@ class PositionwiseFeedForward(nn.Module):
 
 # pylint: disable=arguments-differ
 class PositionalEncoding(nn.Module):
-
-    def __init__(self,
-                 size: int = 0,
-                 max_len: int = 200000, # Max length was too small for the required length
-                 mask_count=False):
+    def __init__(
+        self,
+        size: int = 0,
+        max_len: int = 200000,  # Max length was too small for the required length
+        mask_count=False,
+    ):
 
         if size % 2 != 0:
-            raise ValueError("Cannot use sin/cos positional encoding with "
-                             "odd dim (got dim={:d})".format(size))
+            raise ValueError(
+                "Cannot use sin/cos positional encoding with "
+                "odd dim (got dim={:d})".format(size)
+            )
         pe = torch.zeros(max_len, size)
         position = torch.arange(0, max_len).unsqueeze(1)
-        div_term = torch.exp((torch.arange(0, size, 2, dtype=torch.float) *
-                              -(math.log(10000.0) / size)))
+        div_term = torch.exp(
+            (torch.arange(0, size, 2, dtype=torch.float) * -(math.log(10000.0) / size))
+        )
         pe[:, 0::2] = torch.sin(position.float() * div_term)
         pe[:, 1::2] = torch.cos(position.float() * div_term)
         pe = pe.unsqueeze(0)  # shape: [1, size, max_len]
@@ -120,22 +132,18 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, emb):
 
-        return emb + self.pe[:, :emb.size(1)]
+        return emb + self.pe[:, : emb.size(1)]
 
 
 class TransformerEncoderLayer(nn.Module):
-
-    def __init__(self,
-                 size: int = 0,
-                 ff_size: int = 0,
-                 num_heads: int = 0,
-                 dropout: float = 0.1):
+    def __init__(
+        self, size: int = 0, ff_size: int = 0, num_heads: int = 0, dropout: float = 0.1
+    ):
 
         super(TransformerEncoderLayer, self).__init__()
 
         self.layer_norm = nn.LayerNorm(size, eps=1e-6)
-        self.src_src_att = MultiHeadedAttention(num_heads, size,
-                                                dropout=dropout)
+        self.src_src_att = MultiHeadedAttention(num_heads, size, dropout=dropout)
         self.feed_forward = PositionwiseFeedForward(size, ff_size=ff_size)
         self.dropout = nn.Dropout(dropout)
         self.size = size
@@ -153,22 +161,21 @@ class TransformerEncoderLayer(nn.Module):
 
 
 class TransformerDecoderLayer(nn.Module):
-
-    def __init__(self,
-                 size: int = 0,
-                 ff_size: int = 0,
-                 num_heads: int = 0,
-                 dropout: float = 0.1,
-                 decoder_trg_trg: bool = True):
+    def __init__(
+        self,
+        size: int = 0,
+        ff_size: int = 0,
+        num_heads: int = 0,
+        dropout: float = 0.1,
+        decoder_trg_trg: bool = True,
+    ):
 
         super(TransformerDecoderLayer, self).__init__()
         self.size = size
 
-        self.trg_trg_att = MultiHeadedAttention(num_heads, size,
-                                                dropout=dropout)
+        self.trg_trg_att = MultiHeadedAttention(num_heads, size, dropout=dropout)
 
-        self.src_trg_att = MultiHeadedAttention(num_heads, size,
-                                                dropout=dropout)
+        self.src_trg_att = MultiHeadedAttention(num_heads, size, dropout=dropout)
 
         self.feed_forward = PositionwiseFeedForward(size, ff_size=ff_size)
 
@@ -180,12 +187,14 @@ class TransformerDecoderLayer(nn.Module):
         self.decoder_trg_trg = decoder_trg_trg
 
     # pylint: disable=arguments-differ
-    def forward(self,
-                x: Tensor = None,
-                memory: Tensor = None,
-                src_mask: Tensor = None,
-                trg_mask: Tensor = None,
-                padding_mask: Tensor = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor = None,
+        memory: Tensor = None,
+        src_mask: Tensor = None,
+        trg_mask: Tensor = None,
+        padding_mask: Tensor = None,
+    ) -> Tensor:
 
         # decoder/target self-attention
         h1 = self.x_layer_norm(x)

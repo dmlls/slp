@@ -1,20 +1,21 @@
-# coding: utf-8
 """
 Data module
 """
-import sys
+import io
 import os
 import os.path
-import io
-import constants
+import sys
 from typing import Optional
+
+import torch
 
 # from torchtext.datasets import TranslationDataset
 from torchtext import data
-from torchtext.data import Dataset, Iterator, Field
-import torch
+from torchtext.data import Dataset, Field, Iterator
 
-from vocabulary import build_vocab, Vocabulary
+import constants
+from vocabulary import Vocabulary, build_vocab
+
 
 # Load the Regression Data
 # Data format should be parallel .txt files for src, trg and files
@@ -25,8 +26,9 @@ from vocabulary import build_vocab, Vocabulary
 # Each joint value should be separated by a space; " "
 # Each frame is partioned using the known trg_size length, which includes all joints (In 2D or 3D) and the counter
 # Files file should contain the name of each sequence on a new line
-def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
-                                  Vocabulary, Vocabulary):
+def load_data(
+    cfg: dict,
+) -> (Dataset, Dataset, Optional[Dataset], Vocabulary, Vocabulary):
     """
     Load train, dev and optionally test data as specified in configuration.
     Vocabularies are created from the training set with a limit of `voc_limit`
@@ -66,11 +68,16 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
     tok_fun = lambda s: list(s) if level == "char" else s.split()
 
     # Source field is a tokenised version of the source words
-    src_field = data.Field(init_token=None, eos_token=constants.EOS_TOKEN,
-                           pad_token=constants.PAD_TOKEN, tokenize=tok_fun,
-                           batch_first=True, lower=lowercase,
-                           unk_token=constants.UNK_TOKEN,
-                           include_lengths=True)
+    src_field = data.Field(
+        init_token=None,
+        eos_token=constants.EOS_TOKEN,
+        pad_token=constants.PAD_TOKEN,
+        tokenize=tok_fun,
+        batch_first=True,
+        lower=lowercase,
+        unk_token=constants.UNK_TOKEN,
+        include_lengths=True,
+    )
 
     # Files field is just a raw text field
     files_field = data.RawField()
@@ -85,43 +92,50 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
 
     # Creating a regression target field
     # Pad token is a vector of output size, containing the constant TARGET_PAD
-    reg_trg_field = data.Field(sequential=True,
-                               use_vocab=False,
-                               dtype=torch.float32,
-                               batch_first=True,
-                               include_lengths=False,
-                               pad_token=torch.ones((trg_size,))*constants.TARGET_PAD,
-                               preprocessing=tokenize_features,
-                               postprocessing=stack_features,)
+    reg_trg_field = data.Field(
+        sequential=True,
+        use_vocab=False,
+        dtype=torch.float32,
+        batch_first=True,
+        include_lengths=False,
+        pad_token=torch.ones((trg_size,)) * constants.TARGET_PAD,
+        preprocessing=tokenize_features,
+        postprocessing=stack_features,
+    )
 
     # Create the Training Data, using the SignProdDataset
-    train_data = SignProdDataset(path=train_path,
-                                    exts=("." + src_lang, "." + trg_lang, "." + files_lang),
-                                    fields=(src_field, reg_trg_field, files_field),
-                                    trg_size=trg_size,
-                                    skip_frames=skip_frames,
-                                    filter_pred=
-                                    lambda x: len(vars(x)['src'])
-                                    <= max_sent_length
-                                    and len(vars(x)['trg'])
-                                    <= max_sent_length)
+    train_data = SignProdDataset(
+        path=train_path,
+        exts=("." + src_lang, "." + trg_lang, "." + files_lang),
+        fields=(src_field, reg_trg_field, files_field),
+        trg_size=trg_size,
+        skip_frames=skip_frames,
+        filter_pred=lambda x: len(vars(x)['src']) <= max_sent_length
+        and len(vars(x)['trg']) <= max_sent_length,
+    )
 
     src_max_size = data_cfg.get("src_voc_limit", sys.maxsize)
     src_min_freq = data_cfg.get("src_voc_min_freq", 1)
     src_vocab, pretrained_embed = build_vocab(
-        cfg, field="src", min_freq=src_min_freq, max_size=src_max_size,
-        dataset=train_data)
+        cfg,
+        field="src",
+        min_freq=src_min_freq,
+        max_size=src_max_size,
+        dataset=train_data,
+    )
 
     # Create a target vocab just as big as the required target vector size -
     # So that len(trg_vocab) is # of joints + 1 (for the counter)
-    trg_vocab = [None]*trg_size
+    trg_vocab = [None] * trg_size
 
     # Create the Validation Data
-    dev_data = SignProdDataset(path=dev_path,
-                               exts=("." + src_lang, "." + trg_lang, "." + files_lang),
-                               trg_size=trg_size,
-                               fields=(src_field, reg_trg_field, files_field),
-                               skip_frames=skip_frames)
+    dev_data = SignProdDataset(
+        path=dev_path,
+        exts=("." + src_lang, "." + trg_lang, "." + files_lang),
+        trg_size=trg_size,
+        fields=(src_field, reg_trg_field, files_field),
+        skip_frames=skip_frames,
+    )
 
     # Create the Testing Data
     test_data = SignProdDataset(
@@ -129,7 +143,8 @@ def load_data(cfg: dict) -> (Dataset, Dataset, Optional[Dataset],
         exts=("." + src_lang, "." + trg_lang, "." + files_lang),
         trg_size=trg_size,
         fields=(src_field, reg_trg_field, files_field),
-        skip_frames=skip_frames)
+        skip_frames=skip_frames,
+    )
 
     src_field.vocab = src_vocab
 
@@ -156,11 +171,13 @@ def token_batch_size_fn(new, count, sofar):
     return max(src_elements, tgt_elements)
 
 
-def make_data_iter(dataset: Dataset,
-                   batch_size: int,
-                   batch_type: str = "sentence",
-                   train: bool = False,
-                   shuffle: bool = False) -> Iterator:
+def make_data_iter(
+    dataset: Dataset,
+    batch_size: int,
+    batch_type: str = "sentence",
+    train: bool = False,
+    shuffle: bool = False,
+) -> Iterator:
     """
     Returns a torchtext iterator for a torchtext dataset.
 
@@ -179,18 +196,29 @@ def make_data_iter(dataset: Dataset,
     if train:
         # optionally shuffle and sort during training
         data_iter = data.BucketIterator(
-            repeat=False, sort=False, dataset=dataset,
-            batch_size=batch_size, batch_size_fn=batch_size_fn,
-            train=True, sort_within_batch=True,
-            sort_key=lambda x: len(x.src), shuffle=shuffle)
+            repeat=False,
+            sort=False,
+            dataset=dataset,
+            batch_size=batch_size,
+            batch_size_fn=batch_size_fn,
+            train=True,
+            sort_within_batch=True,
+            sort_key=lambda x: len(x.src),
+            shuffle=shuffle,
+        )
     else:
         # don't sort/shuffle for validation/inference
         data_iter = data.BucketIterator(
-            repeat=False, dataset=dataset,
-            batch_size=batch_size, batch_size_fn=batch_size_fn,
-            train=False, sort=False)
+            repeat=False,
+            dataset=dataset,
+            batch_size=batch_size,
+            batch_size_fn=batch_size_fn,
+            train=False,
+            sort=False,
+        )
 
     return data_iter
+
 
 # Main Dataset Class
 class SignProdDataset(data.Dataset):
@@ -211,21 +239,27 @@ class SignProdDataset(data.Dataset):
         if not isinstance(fields[0], (tuple, list)):
             fields = [('src', fields[0]), ('trg', fields[1]), ('file_paths', fields[2])]
 
-        src_path, trg_path, file_path = tuple(os.path.expanduser(path + x) for x in exts)
+        src_path, trg_path, file_path = tuple(
+            os.path.expanduser(path + x) for x in exts
+        )
 
         examples = []
         # Extract the parallel src, trg and file files
-        with io.open(src_path, mode='r', encoding='utf-8') as src_file, \
-                io.open(trg_path, mode='r', encoding='utf-8') as trg_file, \
-                    io.open(file_path, mode='r', encoding='utf-8') as files_file:
+        with io.open(src_path, mode='r', encoding='utf-8') as src_file, io.open(
+            trg_path, mode='r', encoding='utf-8'
+        ) as trg_file, io.open(file_path, mode='r', encoding='utf-8') as files_file:
 
             i = 0
             # For Source, Target and FilePath
             for src_line, trg_line, files_line in zip(src_file, trg_file, files_file):
-                i+= 1
+                i += 1
 
                 # Strip away the "\n" at the end of the line
-                src_line, trg_line, files_line = src_line.strip(), trg_line.strip(), files_line.strip()
+                src_line, trg_line, files_line = (
+                    src_line.strip(),
+                    trg_line.strip(),
+                    files_line.strip(),
+                )
 
                 # Split target into joint coordinate values
                 trg_line = trg_line.split(" ")
@@ -235,11 +269,17 @@ class SignProdDataset(data.Dataset):
                 trg_line = [(float(joint) + 1e-8) for joint in trg_line]
                 # Split up the joints into frames, using trg_size as the amount of coordinates in each frame
                 # If using skip frames, this just skips over every Nth frame
-                trg_frames = [trg_line[i:i + trg_size] for i in range(0, len(trg_line), trg_size*skip_frames)]
+                trg_frames = [
+                    trg_line[i : i + trg_size]
+                    for i in range(0, len(trg_line), trg_size * skip_frames)
+                ]
 
                 # Create a dataset examples out of the Source, Target Frames and FilesPath
                 if src_line != '' and trg_line != '':
-                    examples.append(data.Example.fromlist(
-                        [src_line, trg_frames, files_line], fields))
+                    examples.append(
+                        data.Example.fromlist(
+                            [src_line, trg_frames, files_line], fields
+                        )
+                    )
 
         super(SignProdDataset, self).__init__(examples, fields, **kwargs)

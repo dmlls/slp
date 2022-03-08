@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
 Implementation of a mini-batch.
 """
@@ -8,6 +6,7 @@ import torch
 import torch.nn.functional as F
 
 import constants
+
 
 class Batch:
     """Object for holding a batch of data with mask during training.
@@ -48,7 +47,7 @@ class Batch:
             trg_lengths = torch_batch.trg.shape[1]
             # trg_input is used for teacher forcing, last one is cut off
             # Remove the last frame for target input, as inputs are only up to frame N-1
-            self.trg_input = trg.clone()[:, :-1,:]
+            self.trg_input = trg.clone()[:, :-1, :]
 
             self.trg_lengths = trg_lengths
             # trg is used for loss computation, shifted by one since BOS
@@ -65,12 +64,20 @@ class Batch:
                 future_trg = torch.Tensor()
                 # Concatenate each frame (Not counter)
                 for i in range(0, self.future_prediction):
-                    future_trg = torch.cat((future_trg, self.trg[:, i:-(self.future_prediction - i), :-1].clone()), dim=2)
+                    future_trg = torch.cat(
+                        (
+                            future_trg,
+                            self.trg[:, i : -(self.future_prediction - i), :-1].clone(),
+                        ),
+                        dim=2,
+                    )
                 # Create the final target using the collected future_trg and original trg
-                self.trg = torch.cat((future_trg, self.trg[:,:-self.future_prediction,-1:]), dim=2)
+                self.trg = torch.cat(
+                    (future_trg, self.trg[:, : -self.future_prediction, -1:]), dim=2
+                )
 
                 # Cut off the last N frames of the trg_input
-                self.trg_input = self.trg_input[:, :-self.future_prediction, :]
+                self.trg_input = self.trg_input[:, : -self.future_prediction, :]
 
             # Target Pad is dynamic, so we exclude the padded areas from the loss computation
             trg_mask = (self.trg_input != self.target_pad).unsqueeze(1)
@@ -78,7 +85,12 @@ class Batch:
             # adding padding that replicates - so just continues the False's or True's
             pad_amount = self.trg_input.shape[1] - self.trg_input.shape[2]
             # Create the target mask the same size as target input
-            self.trg_mask = (F.pad(input=trg_mask.double(), pad=(pad_amount, 0, 0, 0), mode='replicate') == 1.0)
+            self.trg_mask = (
+                F.pad(
+                    input=trg_mask.double(), pad=(pad_amount, 0, 0, 0), mode='replicate'
+                )
+                == 1.0
+            )
             self.ntokens = (self.trg != pad_index).data.sum().item()
 
         if self.use_cuda:
@@ -98,4 +110,3 @@ class Batch:
             self.trg_input = self.trg_input.cuda()
             self.trg = self.trg.cuda()
             self.trg_mask = self.trg_mask.cuda()
-

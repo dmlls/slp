@@ -1,25 +1,25 @@
-# coding: utf-8
-
 """
-Vocabulary module
+Vocabulary module.
 """
-import torch
-import numpy as np
-import constants
-from transformers import AutoTokenizer, AutoModelForMaskedLM
-from collections import defaultdict, Counter
+from collections import Counter, defaultdict
 from typing import List
 
+import numpy as np
+import torch
 from torchtext.data import Dataset
-from transformers import logging
+from transformers import AutoModelForMaskedLM, AutoTokenizer, logging
+
+import constants
 
 logging.set_verbosity_warning()
 
 
 class Vocabulary:
-    """ Vocabulary represents mapping between tokens and indices."""
+    """Vocabulary represents mapping between tokens and indices."""
 
-    def __init__(self, model: str = None, tokens: List[str] = None, file: str = None) -> None:
+    def __init__(
+        self, model: str = None, tokens: List[str] = None, file: str = None
+    ) -> None:
 
         # don't rename stoi and itos since needed for torchtext
         # warning: stoi grows with unknown tokens, don't use for saving or size
@@ -29,10 +29,12 @@ class Vocabulary:
         self.model = model
 
         # special symbols
-        self.specials = [constants.UNK_TOKEN,
-                         constants.PAD_TOKEN,
-                         constants.BOS_TOKEN,
-                         constants.EOS_TOKEN]
+        self.specials = [
+            constants.UNK_TOKEN,
+            constants.PAD_TOKEN,
+            constants.BOS_TOKEN,
+            constants.EOS_TOKEN,
+        ]
 
         self.stoi = defaultdict(constants.DEFAULT_UNK_ID)
         self.itos = []
@@ -52,7 +54,7 @@ class Vocabulary:
         if self.model == "bert":
             self.add_tokens(tokens=tokens)
         else:  # model = None
-            self.add_tokens(tokens=self.specials+tokens)
+            self.add_tokens(tokens=self.specials + tokens)
         assert len(self.stoi) == len(self.itos)
 
     def _from_file(self, file: str) -> None:
@@ -123,8 +125,7 @@ class Vocabulary:
             sentence.append(s)
         return sentence
 
-    def arrays_to_sentences(self, arrays: np.array, cut_at_eos=True) \
-            -> List[List[str]]:
+    def arrays_to_sentences(self, arrays: np.array, cut_at_eos=True) -> List[List[str]]:
         """
         Convert multiple arrays containing sequences of token IDs to their
         sentences, optionally cutting them off at the end-of-sequence token.
@@ -135,17 +136,12 @@ class Vocabulary:
         """
         sentences = []
         for array in arrays:
-            sentences.append(
-                self.array_to_sentence(array=array, cut_at_eos=cut_at_eos))
+            sentences.append(self.array_to_sentence(array=array, cut_at_eos=cut_at_eos))
         return sentences
 
 
 def build_vocab(
-    cfg: dict,
-    field: str,
-    max_size: int,
-    min_freq: int,
-    dataset: Dataset
+    cfg: dict, field: str, max_size: int, min_freq: int, dataset: Dataset
 ) -> Vocabulary:
     """
     Builds vocabulary for a torchtext `field` from given`dataset` or
@@ -173,17 +169,17 @@ def build_vocab(
     elif model == "none":
         # create newly from the input dataset
         def filter_min(counter: Counter, min_freq: int):
-            """ Filter counter by min frequency """
-            filtered_counter = Counter({t: c for t, c in counter.items()
-                                        if c >= min_freq})
+            """Filter counter by min frequency"""
+            filtered_counter = Counter(
+                {t: c for t, c in counter.items() if c >= min_freq}
+            )
             return filtered_counter
 
         def sort_and_cut(counter: Counter, limit: int):
-            """ Cut counter to most frequent,
+            """Cut counter to most frequent,
             sorted numerically and alphabetically"""
             # sort by frequency, then alphabetically
-            tokens_and_frequencies = sorted(counter.items(),
-                                            key=lambda tup: tup[0])
+            tokens_and_frequencies = sorted(counter.items(), key=lambda tup: tup[0])
             tokens_and_frequencies.sort(key=lambda tup: tup[1], reverse=True)
             vocab_tokens = [i[0] for i in tokens_and_frequencies[:limit]]
             return vocab_tokens
@@ -210,10 +206,16 @@ def build_vocab(
 
     elif model == "bert":
         tokenizer = AutoTokenizer.from_pretrained("dbmdz/bert-base-german-uncased")
-        embed_model = AutoModelForMaskedLM.from_pretrained("dbmdz/bert-base-german-uncased")
+        embed_model = AutoModelForMaskedLM.from_pretrained(
+            "dbmdz/bert-base-german-uncased"
+        )
         vocab = [token for token in tokenizer.get_vocab().items()]  # tokens and its ids
-        embeddings = torch.stack([embed_model.get_input_embeddings()(torch.tensor(token[1]))
-                                  for token in vocab])
+        embeddings = torch.stack(
+            [
+                embed_model.get_input_embeddings()(torch.tensor(token[1]))
+                for token in vocab
+            ]
+        )
         vocab = Vocabulary(model=model, tokens=[token[0] for token in vocab])
     else:
         raise ValueError(f"embeddings from model {model} not supported")

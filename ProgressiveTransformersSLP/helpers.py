@@ -1,32 +1,28 @@
-# coding: utf-8
 """
 Collection of helper functions
 """
 import copy
+import errno
 import glob
+import logging
 import os
 import os.path
-import errno
-import shutil
 import random
-import logging
+import shutil
 from logging import Logger
-from typing import Callable, Optional, List
+from typing import Optional
+
 import numpy as np
-
 import torch
-from torch import nn, Tensor
-from torch.utils.tensorboard import SummaryWriter
-
-from torchtext.data import Dataset
 import yaml
-from vocabulary import Vocabulary
+from torch import Tensor, nn
 
 from dtw import dtw
 
 
 class ConfigurationError(Exception):
-    """ Custom exception for misspecifications of configuration """
+    """Custom exception for misspecifications of configuration"""
+
 
 def make_model_dir(model_dir: str, overwrite=False, model_continue=False) -> str:
     """
@@ -47,8 +43,7 @@ def make_model_dir(model_dir: str, overwrite=False, model_continue=False) -> str
 
         # If set to not overwrite, this will error
         if not overwrite:
-            raise FileExistsError(
-                "Model directory exists and overwriting is disabled.")
+            raise FileExistsError("Model directory exists and overwriting is disabled.")
 
         # If overwrite, recursively delete previous directory to start with empty dir again
         for file in os.listdir(model_dir):
@@ -73,8 +68,7 @@ def make_logger(model_dir: str, log_file: str = "train.log") -> Logger:
     """
     logger = logging.getLogger(__name__)
     logger.setLevel(level=logging.DEBUG)
-    fh = logging.FileHandler(
-        "{}/{}".format(model_dir, log_file))
+    fh = logging.FileHandler("{}/{}".format(model_dir, log_file))
     fh.setLevel(level=logging.DEBUG)
     logger.addHandler(fh)
     sh = logging.StreamHandler()
@@ -125,7 +119,8 @@ def subsequent_mask(size: int) -> Tensor:
     """
     mask = np.triu(np.ones((1, size, size)), k=1).astype('uint8')
 
-    return torch.from_numpy(mask) == 0 # Turns it into True and False's
+    return torch.from_numpy(mask) == 0  # Turns it into True and False's
+
 
 # Subsequent mask of two sizes
 def uneven_subsequent_mask(x_size: int, y_size: int) -> Tensor:
@@ -138,6 +133,7 @@ def uneven_subsequent_mask(x_size: int, y_size: int) -> Tensor:
     """
     mask = np.triu(np.ones((1, x_size, y_size)), k=1).astype('uint8')
     return torch.from_numpy(mask) == 0  # Turns it into True and False's
+
 
 def set_seed(seed: int) -> None:
     """
@@ -172,7 +168,7 @@ def bpe_postprocess(string) -> str:
     return string.replace("@@ ", "")
 
 
-def get_latest_checkpoint(ckpt_dir, post_fix="_every" ) -> Optional[str]:
+def get_latest_checkpoint(ckpt_dir, post_fix="_every") -> Optional[str]:
     """
     Returns the latest checkpoint (by time) from the given directory, of either every validation step or best
     If there is no checkpoint in this directory, returns None
@@ -183,7 +179,7 @@ def get_latest_checkpoint(ckpt_dir, post_fix="_every" ) -> Optional[str]:
     :return: latest checkpoint file
     """
     # Find all the every validation checkpoints
-    list_of_files = glob.glob("{}/*{}.ckpt".format(ckpt_dir,post_fix))
+    list_of_files = glob.glob("{}/*{}.ckpt".format(ckpt_dir, post_fix))
     latest_checkpoint = None
     if list_of_files:
         latest_checkpoint = max(list_of_files, key=os.path.getctime)
@@ -201,6 +197,7 @@ def load_checkpoint(path: str, use_cuda: bool = True) -> dict:
     assert os.path.isfile(path), "Checkpoint %s not found" % path
     checkpoint = torch.load(path, map_location='cuda' if use_cuda else 'cpu')
     return checkpoint
+
 
 def freeze_params(module: nn.Module) -> None:
     """
@@ -223,6 +220,7 @@ def symlink_update(target, link_name):
         else:
             raise e
 
+
 # Find the best timing match between a reference and a hypothesis, using DTW
 def calculate_dtw(references, hypotheses):
     """
@@ -244,23 +242,27 @@ def calculate_dtw(references, hypotheses):
     # For each reference in the references list
     for i, ref in enumerate(references):
         # Cut the reference down to the max count value
-        _ , ref_max_idx = torch.max(ref[:, -1], 0)
-        if ref_max_idx == 0: ref_max_idx += 1
+        _, ref_max_idx = torch.max(ref[:, -1], 0)
+        if ref_max_idx == 0:
+            ref_max_idx += 1
         # Cut down frames by to the max counter value, and chop off counter from joints
-        ref_count = ref[:ref_max_idx,:-1].cpu().numpy()
+        ref_count = ref[:ref_max_idx, :-1].cpu().numpy()
 
         # Cut the hypothesis down to the max count value
         hyp = hypotheses[i]
         _, hyp_max_idx = torch.max(hyp[:, -1], 0)
-        if hyp_max_idx == 0: hyp_max_idx += 1
+        if hyp_max_idx == 0:
+            hyp_max_idx += 1
         # Cut down frames by to the max counter value, and chop off counter from joints
-        hyp_count = hyp[:hyp_max_idx,:-1].cpu().numpy()
+        hyp_count = hyp[:hyp_max_idx, :-1].cpu().numpy()
 
         # Calculate DTW of the reference and hypothesis, using euclidean norm
-        d, cost_matrix, acc_cost_matrix, path = dtw(ref_count, hyp_count, dist=euclidean_norm)
+        d, cost_matrix, acc_cost_matrix, path = dtw(
+            ref_count, hyp_count, dist=euclidean_norm
+        )
 
         # Normalise the dtw cost by sequence length
-        d = d/acc_cost_matrix.shape[0]
+        d = d / acc_cost_matrix.shape[0]
 
         dtw_scores.append(d)
 
