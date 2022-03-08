@@ -375,107 +375,106 @@ class TrainManager:
                     start_tokens = self.total_tokens
 
                 # validate on the entire dev set
-            # if self.steps % self.validation_freq == 0 and update:
-            if self.validation_freq and update:
-                valid_start_time = time.time()
+                if self.steps % self.validation_freq == 0 and update:
+                    valid_start_time = time.time()
 
-                (
-                    valid_score,
-                    valid_loss,
-                    valid_references,
-                    valid_hypotheses,
-                    valid_inputs,
-                    all_dtw_scores,
-                    valid_file_paths,
-                ) = validate_on_data(
-                    batch_size=self.eval_batch_size,
-                    data=valid_data,
-                    eval_metric=self.eval_metric,
-                    model=self.model,
-                    max_output_length=self.max_output_length,
-                    loss_function=self.loss,
-                    batch_type=self.eval_batch_type,
-                    type="val",
-                )
-
-                val_step += 1
-
-                # Tensorboard writer
-                self.tb_writer.add_scalar("valid/valid_loss", valid_loss, self.steps)
-                self.tb_writer.add_scalar("valid/valid_score", valid_score, self.steps)
-
-                if self.early_stopping_metric == "loss":
-                    ckpt_score = valid_loss
-                elif self.early_stopping_metric == "dtw":
-                    ckpt_score = valid_score
-                else:
-                    ckpt_score = valid_score
-
-                new_best = False
-                self.best = False
-                if self.is_best(ckpt_score):
-                    self.best = True
-                    self.best_ckpt_score = ckpt_score
-                    self.best_ckpt_iteration = self.steps
-                    self.logger.info(
-                        'Hooray! New best validation result [%s]!',
-                        self.early_stopping_metric,
+                    (
+                        valid_score,
+                        valid_loss,
+                        valid_references,
+                        valid_hypotheses,
+                        valid_inputs,
+                        all_dtw_scores,
+                        valid_file_paths,
+                    ) = validate_on_data(
+                        batch_size=self.eval_batch_size,
+                        data=valid_data,
+                        eval_metric=self.eval_metric,
+                        model=self.model,
+                        max_output_length=self.max_output_length,
+                        loss_function=self.loss,
+                        batch_type=self.eval_batch_type,
+                        type="val",
                     )
-                    if self.ckpt_queue.maxsize > 0:
-                        self.logger.info("Saving new checkpoint.")
-                        new_best = True
-                        self._save_checkpoint(type="best")
 
-                    # Display these sequences, in this index order
-                    display = list(
-                        range(
-                            0,
-                            len(valid_hypotheses),
-                            int(np.ceil(len(valid_hypotheses) / 13.15)),
+                    val_step += 1
+
+                    # Tensorboard writer
+                    self.tb_writer.add_scalar("valid/valid_loss", valid_loss, self.steps)
+                    self.tb_writer.add_scalar("valid/valid_score", valid_score, self.steps)
+
+                    if self.early_stopping_metric == "loss":
+                        ckpt_score = valid_loss
+                    elif self.early_stopping_metric == "dtw":
+                        ckpt_score = valid_score
+                    else:
+                        ckpt_score = valid_score
+
+                    new_best = False
+                    self.best = False
+                    if self.is_best(ckpt_score):
+                        self.best = True
+                        self.best_ckpt_score = ckpt_score
+                        self.best_ckpt_iteration = self.steps
+                        self.logger.info(
+                            'Hooray! New best validation result [%s]!',
+                            self.early_stopping_metric,
                         )
+                        if self.ckpt_queue.maxsize > 0:
+                            self.logger.info("Saving new checkpoint.")
+                            new_best = True
+                            self._save_checkpoint(type="best")
+
+                        # Display these sequences, in this index order
+                        display = list(
+                            range(
+                                0,
+                                len(valid_hypotheses),
+                                int(np.ceil(len(valid_hypotheses) / 13.15)),
+                            )
+                        )
+                        self.produce_validation_video(
+                            output_joints=valid_hypotheses,
+                            inputs=valid_inputs,
+                            references=valid_references,
+                            model_dir=self.model_dir,
+                            steps=self.steps,
+                            display=display,
+                            type="val_inf",
+                            file_paths=valid_file_paths,
+                        )
+
+                    self._save_checkpoint(type="every")
+
+                    if (
+                        self.scheduler is not None
+                        and self.scheduler_step_at == "validation"
+                    ):
+                        self.scheduler.step(ckpt_score)
+
+                    # append to validation report
+                    self._add_report(
+                        valid_score=valid_score,
+                        valid_loss=valid_loss,
+                        eval_metric=self.eval_metric,
+                        new_best=new_best,
+                        report_type="val",
                     )
-                    self.produce_validation_video(
-                        output_joints=valid_hypotheses,
-                        inputs=valid_inputs,
-                        references=valid_references,
-                        model_dir=self.model_dir,
-                        steps=self.steps,
-                        display=display,
-                        type="val_inf",
-                        file_paths=valid_file_paths,
+
+                    valid_duration = time.time() - valid_start_time
+                    total_valid_duration += valid_duration
+                    self.logger.info(
+                        'Validation result at epoch %3d, step %8d: Val DTW Score: %6.2f, '
+                        'loss: %8.4f,  duration: %.4fs',
+                        epoch_no + 1,
+                        self.steps,
+                        valid_score,
+                        valid_loss,
+                        valid_duration,
                     )
 
-                self._save_checkpoint(type="every")
-
-                if (
-                    self.scheduler is not None
-                    and self.scheduler_step_at == "validation"
-                ):
-                    self.scheduler.step(ckpt_score)
-
-                # append to validation report
-                self._add_report(
-                    valid_score=valid_score,
-                    valid_loss=valid_loss,
-                    eval_metric=self.eval_metric,
-                    new_best=new_best,
-                    report_type="val",
-                )
-
-                valid_duration = time.time() - valid_start_time
-                total_valid_duration += valid_duration
-                self.logger.info(
-                    'Validation result at epoch %3d, step %8d: Val DTW Score: %6.2f, '
-                    'loss: %8.4f,  duration: %.4fs',
-                    epoch_no + 1,
-                    self.steps,
-                    valid_score,
-                    valid_loss,
-                    valid_duration,
-                )
-
-            if self.stop:
-                break
+                if self.stop:
+                    break
             if self.stop:
                 self.logger.info(
                     'Training ended since minimum lr %f was reached.',
