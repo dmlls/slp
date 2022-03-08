@@ -160,13 +160,12 @@ def build_vocab(
     vocab_file = cfg["data"].get("src_vocab", None)
     # Use pretrained embeddings from this model or train embeddings from
     # scratch if model = "none"
-    model = cfg["model"]["encoder"]["embeddings"]["model"]
     embeddings = None
 
     if vocab_file is not None and model == "none":
         # load it from file
         vocab = Vocabulary(file=vocab_file)
-    elif model == "none":
+    elif constants.pretrained_model_str == "none":
         # create newly from the input dataset
         def filter_min(counter: Counter, min_freq: int):
             """Filter counter by min frequency"""
@@ -204,19 +203,22 @@ def build_vocab(
         for s in vocab.specials[1:]:
             assert not vocab.is_unk(s)
 
-    elif model == "bert":
-        tokenizer = AutoTokenizer.from_pretrained("dbmdz/bert-base-german-uncased")
+    elif constants.pretrained_model_str == "bert":
+        tokenizer = constants.tokenizer
         embed_model = AutoModelForMaskedLM.from_pretrained(
             "dbmdz/bert-base-german-uncased"
         )
-        vocab = [token for token in tokenizer.get_vocab().items()]  # tokens and its ids
+        # Get vocabulary, sorted by the token ids
+        vocab = [token for token in sorted(tokenizer.get_vocab().items(),
+                                           key=lambda x: x[1])]
         embeddings = torch.stack(
             [
                 embed_model.get_input_embeddings()(torch.tensor(token[1]))
                 for token in vocab
             ]
         )
-        vocab = Vocabulary(model=model, tokens=[token[0] for token in vocab])
+        vocab = Vocabulary(model=constants.pretrained_model_str,
+                           tokens=[token[0] for token in vocab])
     else:
         raise ValueError(f"embeddings from model {model} not supported")
 

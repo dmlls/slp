@@ -326,12 +326,12 @@ def build_model(
     dec_embed_dim = cfg["decoder"]["embeddings"]["embedding_dim"]
     dec_hidden_size = cfg["decoder"]["hidden_size"]
 
-    if cfg["encoder"]["embeddings"]["model"] == "bert":
+    if constants.pretrained_model_str == "bert":
         enc_embed_dim, enc_hidden_size, dec_embed_dim, dec_hidden_size = [768] * 4
 
     # Define source embedding
     src_embed = Embeddings(
-        model=cfg["encoder"]["embeddings"]["model"],
+        model=constants.pretrained_model_str,
         embedding_dim=enc_embed_dim,
         pretrained_embed=pretrained_embed,
         vocab_size=len(src_vocab),

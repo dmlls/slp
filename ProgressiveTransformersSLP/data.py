@@ -65,7 +65,10 @@ def load_data(
     # Skip frames is used to skip a set proportion of target frames, to simplify the model requirements
     skip_frames = data_cfg.get("skip_frames", 1)
 
-    tok_fun = lambda s: list(s) if level == "char" else s.split()
+    if constants.pretrained_model_str == "bert":
+        tok_fun = bert_tokenization
+    else:
+        tok_fun = lambda s: list(s) if level == "char" else s.split()
 
     # Source field is a tokenised version of the source words
     src_field = data.Field(
@@ -149,6 +152,11 @@ def load_data(
     src_field.vocab = src_vocab
 
     return train_data, dev_data, test_data, src_vocab, pretrained_embed, trg_vocab
+
+
+def bert_tokenization(string: str):
+    """Tokenize a string using the BERT tokenizer."""
+    return constants.tokenizer(string)['input_ids']
 
 
 # pylint: disable=global-at-module-level
