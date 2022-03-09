@@ -7,7 +7,7 @@ from typing import List
 import numpy as np
 import torch
 from torchtext.data import Dataset
-from transformers import AutoModelForMaskedLM, AutoTokenizer, logging
+from transformers import AutoModelForMaskedLM, logging
 
 import constants
 
@@ -204,23 +204,19 @@ def build_vocab(
             assert not vocab.is_unk(s)
 
     elif constants.pretrained_model_str == "bert":
-        tokenizer = constants.tokenizer
         embed_model = AutoModelForMaskedLM.from_pretrained(
             "dbmdz/bert-base-german-uncased"
         )
-        # Get vocabulary, sorted by the token ids
-        vocab = [token for token in sorted(tokenizer.get_vocab().items(),
-                                           key=lambda x: x[1])]
         embeddings = torch.stack(
             [
                 embed_model.get_input_embeddings()(torch.tensor(token[1]))
-                for token in vocab
+                for token in constants.vocab
             ]
         )
         vocab = Vocabulary(model=constants.pretrained_model_str,
-                           tokens=[token[0] for token in vocab])
+                           tokens=[token[0] for token in constants.vocab])
     else:
-        raise ValueError(f"embeddings from model {model} not supported")
+        raise ValueError(f"embeddings from model {embed_model} not supported")
 
     if embeddings is not None:
         assert len(vocab) == len(embeddings)
