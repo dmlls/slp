@@ -208,17 +208,14 @@ def build_vocab(
         embed_model = AutoModelForMaskedLM.from_pretrained(
             "dbmdz/bert-base-german-uncased"
         )
-        # Get vocabulary, sorted by the token ids
-        vocab = [token for token in sorted(tokenizer.get_vocab().items(),
-                                           key=lambda x: x[1])]
         embeddings = torch.stack(
             [
                 embed_model.get_input_embeddings()(torch.tensor(token[1]))
-                for token in vocab
+                for token in constants.vocab
             ]
         )
         vocab = Vocabulary(model=constants.pretrained_model_str,
-                           tokens=[token[0] for token in vocab])
+                           tokens=[token[0] for token in constants.vocab])
     else:
         raise ValueError(f"embeddings from model {model} not supported")
 

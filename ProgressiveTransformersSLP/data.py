@@ -156,7 +156,10 @@ def load_data(
 
 def bert_tokenization(string: str):
     """Tokenize a string using the BERT tokenizer."""
-    return constants.tokenizer(string)['input_ids']
+    # Tokenize and remove [CLS] and [SEP] (first and last tokens),
+    # since they will be added later.
+    ids = constants.tokenizer(string)['input_ids'][1:-1]
+    return [constants.vocab[id_][0] for id_ in ids]
 
 
 # pylint: disable=global-at-module-level
